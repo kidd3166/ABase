@@ -3,10 +3,9 @@ package com.ouj.library.net;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.ouj.library.BaseApplication;
-
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Cache;
@@ -31,8 +30,6 @@ public class OKHttp {
 
     private static boolean DEBUG = true;
     private static OkHttpClient client = null;
-    private static long TIMEOUT = 30000;
-    private static boolean GZIP = true;
     private int cacheType = CacheType.NETWORK_ELSE_CACHED;
     private String tag;
     private static final Interceptor REWRITE_CACHE_CONTROL_INTERCEPTOR = new Interceptor() {
@@ -45,36 +42,59 @@ public class OKHttp {
         }
     };
 
-    private OKHttp(Context context, int cacheType, String tag) {
-        this.cacheType = cacheType;
-        this.tag = tag;
+    public static void init(Context context, List<Interceptor> netWorkinterceptors, List<Interceptor> interceptors, boolean isGzip, long timeout, int cacheSize) {
+        int totalCacheSize = cacheSize * 1024 * 1024;
+        Cache cache = new Cache(new File(context.getCacheDir(), "okhttp"), totalCacheSize);
 
-        if (OKHttp.client == null) {
-            int cacheSize = 20 * 1024 * 1024;
-            Cache cache = new Cache(new File(context.getCacheDir(), "okhttp"), cacheSize);
+        OkHttpClient.Builder builder = new OkHttpClient.Builder()
+                .cache(cache).connectTimeout(timeout, TimeUnit.MILLISECONDS).readTimeout(timeout, TimeUnit.MILLISECONDS)
+                .addNetworkInterceptor(REWRITE_CACHE_CONTROL_INTERCEPTOR);
+        if (DEBUG) {
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+            builder.addInterceptor(logging);
+        }
+        if (netWorkinterceptors != null && !netWorkinterceptors.isEmpty()) {
+            builder.networkInterceptors().addAll(netWorkinterceptors);
+        }
+        if (interceptors != null && !interceptors.isEmpty()) {
+            builder.interceptors().addAll(interceptors);
+        }
+        if (isGzip) {
+            builder.addInterceptor(new GzipRequestInterceptor());
+        }
+        client = builder.build();
+    }
 
-            OkHttpClient.Builder builder = new OkHttpClient.Builder()
-                    .cache(cache).connectTimeout(TIMEOUT, TimeUnit.MILLISECONDS).readTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
-                    .addNetworkInterceptor(REWRITE_CACHE_CONTROL_INTERCEPTOR);
-            if (DEBUG) {
-                HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-                logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-                builder.addInterceptor(logging);
+    public static OkHttpClient getClient() {
+        return client;
+    }
+
+    public static void cancelTag(String tag) {
+        if (TextUtils.isEmpty(tag))
+            return;
+        if (client == null)
+            return;
+        for (Call call : client.dispatcher().queuedCalls()) {
+            if (tag.equals(call.request().tag())) {
+                call.cancel();
             }
-            if (GZIP) {
-                builder.addInterceptor(new GzipRequestInterceptor());
+        }
+        for (Call call : client.dispatcher().runningCalls()) {
+            if (tag.equals(call.request().tag())) {
+                call.cancel();
             }
-//            if (netWorkinterceptors != null && !netWorkinterceptors.isEmpty()) {
-//                builder.networkInterceptors().addAll(netWorkinterceptors);
-//            }
-//            if (interceptors != null && !interceptors.isEmpty()) {
-//                builder.interceptors().addAll(interceptors);
-//            }
-            client = builder.build();
         }
     }
 
+    private OKHttp(int cacheType, String tag) {
+        this.cacheType = cacheType;
+        this.tag = tag;
+    }
+
     public Call enqueue(final Request request, final ResponseCallback callback) {
+        if (client == null)
+            return null;
         Call call = null;
         switch (cacheType) {
             case CacheType.ONLY_CACHED:
@@ -177,6 +197,8 @@ public class OKHttp {
     }
 
     public Response execute(Request request) {
+        if (client == null)
+            return null;
         Response responseCache, responseNetwork;
         try {
             switch (cacheType) {
@@ -206,22 +228,6 @@ public class OKHttp {
         return null;
     }
 
-    public static void cancelTag(String tag) {
-        if (TextUtils.isEmpty(tag))
-            return;
-        if (client == null)
-            return;
-        for (Call call : client.dispatcher().queuedCalls()) {
-            if (tag.equals(call.request().tag())) {
-                call.cancel();
-            }
-        }
-        for (Call call : client.dispatcher().runningCalls()) {
-            if (tag.equals(call.request().tag())) {
-                call.cancel();
-            }
-        }
-    }
 
     private Response executeCacheRequest(Request request) throws IOException {
         Response response = client.newCall(request.newBuilder().cacheControl(CacheControl.FORCE_CACHE).build()).execute();
@@ -307,7 +313,7 @@ public class OKHttp {
         }
 
         public OKHttp build() {
-            return new OKHttp(BaseApplication.app, cacheType, tag);
+            return new OKHttp(cacheType, tag);
         }
 
         public Builder cacheType(int cacheType) {

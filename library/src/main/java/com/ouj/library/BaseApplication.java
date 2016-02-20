@@ -7,8 +7,10 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.orhanobut.logger.Logger;
 import com.ouj.library.event.ActivityEvent;
 import com.ouj.library.event.OnForegroundEvent;
+import com.ouj.library.net.OKHttp;
 import com.ouj.library.util.ApplicationUtils;
 import com.ouj.library.util.PackageUtils;
 import com.ouj.library.util.SharedPrefUtils;
@@ -63,6 +65,7 @@ public class BaseApplication extends Application implements Application.Activity
             APP_DEBUG = false;
 
         UIUtils.init(context);
+        Logger.init();
     }
 
     public boolean isForeground() {
