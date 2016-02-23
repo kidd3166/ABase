@@ -16,6 +16,7 @@ import android.util.SparseArray;
 
 import com.ouj.library.event.ActivityEvent;
 import com.ouj.library.event.OnForegroundEvent;
+import com.ouj.library.net.OKHttp;
 import com.ouj.library.permission.PermissionHelper;
 
 import de.greenrobot.event.EventBus;
@@ -48,6 +49,7 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         EventBus.getDefault().unregister(this);
+        OKHttp.cancelTag(this);
         super.onDestroy();
         if (permissionHelper != null)
             permissionHelper.onDestroy();

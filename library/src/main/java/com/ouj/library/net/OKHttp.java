@@ -70,11 +70,12 @@ public class OKHttp {
         return client;
     }
 
-    public static void cancelTag(String tag) {
-        if (TextUtils.isEmpty(tag))
+    public static void cancelTag(Object o) {
+        if (o == null)
             return;
         if (client == null)
             return;
+        String tag = o.toString();
         for (Call call : client.dispatcher().queuedCalls()) {
             if (tag.equals(call.request().tag())) {
                 call.cancel();

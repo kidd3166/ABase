@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
+import com.ouj.library.net.OKHttp;
 import com.ouj.library.permission.PermissionHelper;
 
 import de.greenrobot.event.EventBus;
@@ -35,6 +36,7 @@ public class BaseFragment extends Fragment {
 
     @Override
     public void onDestroy() {
+        OKHttp.cancelTag(this);
         super.onDestroy();
         if (permissionHelper != null)
             permissionHelper.onDestroy();

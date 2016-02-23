@@ -30,8 +30,10 @@ public class BaseApplication extends Application implements Application.Activity
     public static final String SP_KEY_TOKEN = "token";
 
     public static String APP_ID;
+    public static String APP_TOKEN;
     public static String APP_CHANNEL;
     public static String APP_VERSION;
+    public static String APP_OS = "2";
     public static boolean APP_DEBUG;
 
     public static Application app;
@@ -43,12 +45,12 @@ public class BaseApplication extends Application implements Application.Activity
     @Override
     public void onCreate() {
         super.onCreate();
-        BaseApplication.app = this;
         baseInit(this);
         registerActivityLifecycleCallbacks(this);
     }
 
     public static void baseInit(Application context) {
+        BaseApplication.app = context;
         APP_ID = ApplicationUtils.getMetadataString(context, "appid");
         APP_CHANNEL = ApplicationUtils.getMetadataString(context, "UMENG_CHANNEL");
         APP_VERSION = String.valueOf(PackageUtils.getVersionCode(context));

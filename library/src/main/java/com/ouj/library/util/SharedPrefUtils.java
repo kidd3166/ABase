@@ -35,7 +35,7 @@ public class SharedPrefUtils {
     private SharedPrefUtils() {
     }
 
-    private static SharedPreferences getPrefs() {
+    public static SharedPreferences getPrefs() {
         // synchronized is really needed or volatile is all I need (visibility)
         // the same instance of SharedPreferences will be returned AFAIC
         SharedPreferences result = prefs;
