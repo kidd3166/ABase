@@ -40,7 +40,12 @@ public class RefreshPtrHelper {
     }
 
     public static interface DataStore {
-        public List getData();
+        public void setItems(List items);
+
+        public int getCount();
+
+        public void clear();
+
     }
 
     public RefreshPtrHelper(PtrFrameLayout mPtrFrameLayout, RecyclerView mRecyclerView, DataStore dataStore, Listener listener) {
@@ -55,9 +60,7 @@ public class RefreshPtrHelper {
         if (mRecyclerView != null) {
             mRecyclerView.setAdapter(null);
         }
-        List items = mDataStore.getData();
-        if (items != null)
-            items.clear();
+        mDataStore.clear();
     }
 
     public void attach() {
@@ -163,21 +166,18 @@ public class RefreshPtrHelper {
         if (responseItems == null)
             return;
 
-        List items = mDataStore.getData();
-        if (items == null)
-            return;
         if (this.isRefresh)
-            items.clear();
-        int originalItemCount = items.size();
-        List _items = responseItems.getItems();
-        if (_items != null && !_items.isEmpty()) {
-            items.addAll(_items);
+            mDataStore.clear();
+        int originalItemCount = mDataStore.getCount();
+        List items = responseItems.getItems();
+        if (items != null && !items.isEmpty()) {
+            mDataStore.setItems(items);
             RecyclerView.Adapter<?> adapter = mRecyclerView.getAdapter();
             if (adapter != null) {
                 if (originalItemCount == 0) {
                     adapter.notifyDataSetChanged();
                 } else {
-                    adapter.notifyItemRangeInserted(originalItemCount, items.size() - 1);
+                    adapter.notifyItemRangeInserted(originalItemCount, mDataStore.getCount() - 1);
                 }
             }
         }

@@ -2,18 +2,13 @@ package com.ouj.library.module;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 
-import com.ouj.library.BaseActivity;
 import com.ouj.library.BaseApplication;
-import com.ouj.library.net.OKHttp;
-import com.ouj.library.net.ResponseStringCallback;
 import com.ouj.library.net.body.ProgressResponseBody;
 import com.ouj.library.util.Tool;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -37,7 +32,7 @@ import okio.Okio;
 /**
  * Created by liqi on 2016-2-23.
  */
-public class AppVersion {
+public class AppVersion implements DialogInterface.OnDismissListener {
 
     private Activity activity;
     private boolean needLoading;
@@ -46,6 +41,10 @@ public class AppVersion {
     public AppVersion(Activity activity, boolean needLoading) {
         this.activity = activity;
         this.needLoading = needLoading;
+    }
+
+    public void destory() {
+        activity = null;
     }
 
     public void checkVersion() {
@@ -69,7 +68,7 @@ public class AppVersion {
 
             @Override
             public void onFailure(Call call, IOException e) {
-
+                destory();
             }
 
             @Override
@@ -109,7 +108,7 @@ public class AppVersion {
                     public void onCancel(DialogInterface dialog) {
                         activity.moveTaskToBack(true);
                     }
-                }).show();
+                }).setOnDismissListener(this).show();
             } else {
                 new AlertDialog.Builder(activity).setTitle(versionTitle).setMessage(updateContent).setPositiveButton("升级", new DialogInterface.OnClickListener() {
                     @Override
@@ -121,7 +120,7 @@ public class AppVersion {
                     public void onClick(DialogInterface dialog, int which) {
 
                     }
-                }).show();
+                }).setOnDismissListener(this).show();
             }
         }
     }
@@ -166,5 +165,10 @@ public class AppVersion {
                 }
             }
         });
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        destory();
     }
 }
