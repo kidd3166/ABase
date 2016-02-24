@@ -14,7 +14,7 @@ public abstract class ResponseCallback<T> extends ResponseGenericCallback<BaseRe
 
     @Override
     public void onResponseEntity(BaseResponse<T> response) {
-        if (response.result == 1) {
+        if (response.ret == 1) {
             onResponse(response.code, response.data);
         } else {
             onResponseError(response.code, response.msg);
