@@ -18,17 +18,20 @@ android {
     }
 }
 
+def androidSupportVersion = '23.2.0'
+def okhttpVersion = '3.1.2'
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'com.android.support:recyclerview-v7:23.1.1'
+    compile "com.android.support:appcompat-v7:$androidSupportVersion"
+    compile "com.android.support:recyclerview-v7:$androidSupportVersion"
     compile 'de.greenrobot:eventbus:2.4.0'
     compile 'com.github.orhanobut:logger:1.12'
-    compile 'com.squareup.okhttp3:okhttp:3.+'
-    compile 'com.squareup.okhttp3:okhttp-ws:3.+'
-    compile 'com.squareup.okhttp3:logging-interceptor:3.+'
+    compile "com.squareup.okhttp3:okhttp:$okhttpVersion"
+    compile "com.squareup.okhttp3:okhttp-ws:$okhttpVersion"
+    compile "com.squareup.okhttp3:logging-interceptor:$okhttpVersion"
     compile 'in.srain.cube:ultra-ptr:1.0.11'
-    compile 'com.eyeem.recyclerviewtools:library:+'
+    compile 'com.eyeem.recyclerviewtools:library:0.0.3-SNAPSHOT@aar'
     compile 'com.alibaba:fastjson:1.1.46.android'
 }

@@ -3,6 +3,8 @@ package com.ouj.library.net;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.alibaba.fastjson.JSON;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -225,6 +227,20 @@ public class OKHttp {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        return null;
+    }
+
+    public <T> T execute(Request request, Class classType) {
+        if (client == null)
+            return null;
+        Response response = execute(request);
+        if (response != null && response.isSuccessful()) {
+            try {
+                return (T) JSON.parseObject(response.body().string(), classType);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }

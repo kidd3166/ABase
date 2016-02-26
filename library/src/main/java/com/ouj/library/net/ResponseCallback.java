@@ -12,6 +12,5 @@ public abstract class ResponseCallback implements Callback {
     }
 
     public void onFinish() {
-
     }
 }

@@ -30,17 +30,18 @@ public class RefreshPtrHelper {
     protected TextView mfooterTips;
     protected ProgressBar mfooterProgress;
 
-    protected int currentPage, resultCount;
-    protected boolean hasMore, loadMore, autoLoad = true, isRefresh;
     protected Listener mListener;
     protected DataStore mDataStore;
+    protected int currentPage, resultCount;
+    protected boolean hasMore, loadMore, autoLoad = true, isRefresh;
+    protected boolean mWrapAdapter, mFooter;
 
     public static interface Listener {
         public void onRefresh(String page, boolean pullToRefresh);
     }
 
     public static interface DataStore {
-        public void setItems(List items);
+        public void setItems(List items, boolean isRefresh);
 
         public int getCount();
 
@@ -53,7 +54,6 @@ public class RefreshPtrHelper {
         this.mRecyclerView = mRecyclerView;
         this.mDataStore = dataStore;
         this.mListener = listener;
-        attach();
     }
 
     public void destroy() {
@@ -68,52 +68,56 @@ public class RefreshPtrHelper {
         if (adapter == null)
             throw new IllegalStateException("RecyclerView Adapter is null");
 
-        WrapAdapter wrapAdapter = null;
-        boolean resetAdapter = false;
-        if (adapter instanceof WrapAdapter) {
-            wrapAdapter = (WrapAdapter) adapter;
-        } else {
-            wrapAdapter = new WrapAdapter(adapter);
-            resetAdapter = true;
-        }
+        if (mWrapAdapter) {
+            WrapAdapter wrapAdapter = null;
+            boolean resetAdapter = false;
+            if (adapter instanceof WrapAdapter) {
+                wrapAdapter = (WrapAdapter) adapter;
+            } else {
+                wrapAdapter = new WrapAdapter(adapter);
+                resetAdapter = true;
+            }
 
-        View footer = LayoutInflater.from(mRecyclerView.getContext()).inflate(R.layout.base__view_recycler_view_footer, mRecyclerView, false);
-        mfooterTips = (TextView) footer.findViewById(R.id.footer_tips);
-        mfooterProgress = (ProgressBar) footer.findViewById(R.id.footer_progress);
-        wrapAdapter.addFooter(footer);
+            if (mFooter) {
+                View footer = LayoutInflater.from(mRecyclerView.getContext()).inflate(R.layout.base__view_recycler_view_footer, mRecyclerView, false);
+                mfooterTips = (TextView) footer.findViewById(R.id.footer_tips);
+                mfooterProgress = (ProgressBar) footer.findViewById(R.id.footer_progress);
+                wrapAdapter.addFooter(footer);
+            }
 
-        if (resetAdapter) {
-            mRecyclerView.setAdapter(wrapAdapter);
-        }
+            if (resetAdapter) {
+                mRecyclerView.setAdapter(wrapAdapter);
+            }
 
-        RecyclerView.LayoutManager layoutManager = mRecyclerView.getLayoutManager();
-        if (layoutManager instanceof GridLayoutManager) {
-            GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
-            gridLayoutManager.setSpanSizeLookup(
-                    wrapAdapter.createSpanSizeLookup(gridLayoutManager.getSpanCount()));
-        }
+            RecyclerView.LayoutManager layoutManager = mRecyclerView.getLayoutManager();
+            if (layoutManager instanceof GridLayoutManager) {
+                GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
+                gridLayoutManager.setSpanSizeLookup(
+                        wrapAdapter.createSpanSizeLookup(gridLayoutManager.getSpanCount()));
+            }
 
-        final LoadMoreOnScrollListener.Listener loadMoreListener = new LoadMoreOnScrollListener.Listener() {
-            @Override
-            public void onLoadMore(RecyclerView recyclerView) {
-                if (hasMore) {
-                    if (!loadMore && autoLoad) {
-                        loadMore = true;
-                        isRefresh = false;
-                        mfooterTips.setText("");
-                        mfooterProgress.setVisibility(View.VISIBLE);
-                        onRefresh(false);
+            final LoadMoreOnScrollListener.Listener loadMoreListener = new LoadMoreOnScrollListener.Listener() {
+                @Override
+                public void onLoadMore(RecyclerView recyclerView) {
+                    if (hasMore) {
+                        if (!loadMore && autoLoad) {
+                            loadMore = true;
+                            isRefresh = false;
+                            mfooterTips.setText("");
+                            mfooterProgress.setVisibility(View.VISIBLE);
+                            onRefresh(false);
+                        }
                     }
                 }
-            }
-        };
-        mRecyclerView.addOnScrollListener(new LoadMoreOnScrollListener(loadMoreListener));
-        mfooterTips.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadMoreListener.onLoadMore(mRecyclerView);
-            }
-        });
+            };
+            mRecyclerView.addOnScrollListener(new LoadMoreOnScrollListener(loadMoreListener));
+            mfooterTips.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    loadMoreListener.onLoadMore(mRecyclerView);
+                }
+            });
+        }
 
         mPtrFrameLayout.setPtrHandler(new PtrHandler() {
             @Override
@@ -166,12 +170,10 @@ public class RefreshPtrHelper {
         if (responseItems == null)
             return;
 
-        if (this.isRefresh)
-            mDataStore.clear();
         int originalItemCount = mDataStore.getCount();
         List items = responseItems.getItems();
         if (items != null && !items.isEmpty()) {
-            mDataStore.setItems(items);
+            mDataStore.setItems(items, this.isRefresh);
             RecyclerView.Adapter<?> adapter = mRecyclerView.getAdapter();
             if (adapter != null) {
                 if (originalItemCount == 0) {
@@ -204,4 +206,18 @@ public class RefreshPtrHelper {
             page = currentPage + 1;
         mListener.onRefresh(String.valueOf(page), pullToRefresh);
     }
+
+    public void setAutoLoad(boolean autoLoad) {
+        this.autoLoad = autoLoad;
+    }
+
+    public void setmWrapAdapter(boolean wrapAdapter) {
+        this.mWrapAdapter = mWrapAdapter;
+    }
+
+    public void setFooter(boolean footer) {
+        this.mFooter = mFooter;
+        this.mWrapAdapter=true;
+    }
+
 }
