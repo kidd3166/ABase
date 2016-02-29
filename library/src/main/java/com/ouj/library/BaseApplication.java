@@ -30,6 +30,7 @@ public class BaseApplication extends Application implements Application.Activity
     public static final String SP_KEY_TOKEN = "token";
 
     public static String APP_ID;
+    public static String APP_UID;
     public static String APP_TOKEN;
     public static String APP_CHANNEL;
     public static String APP_VERSION;

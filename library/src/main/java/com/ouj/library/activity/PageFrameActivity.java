@@ -15,7 +15,7 @@ import com.ouj.library.R;
 public class PageFrameActivity extends AppCompatActivity {
 
     public final static String EXTRA_TITLE = "title";
-    public final static String EXTRA_CLASS = "title";
+    public final static String EXTRA_CLASS = "fragmentClassName";
 
     public static void launchActivity(Activity activity, String title, String fragmentClassName, Bundle extras) {
         Intent intent = new Intent(activity, PageFrameActivity.class);
