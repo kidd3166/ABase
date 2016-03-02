@@ -15,7 +15,7 @@ public abstract class ResponseStringCallback extends ResponseCallback {
 
     private String responseData;
 
-    public abstract void onResponse(String response);
+    public abstract void onResponse(String response) throws Exception;
 
     @Override
     public void onResponse(Call call, Response response) throws IOException {

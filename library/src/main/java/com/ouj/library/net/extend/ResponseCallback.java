@@ -1,24 +1,48 @@
 package com.ouj.library.net.extend;
 
-import com.ouj.library.net.ResponseGenericCallback;
+import com.alibaba.fastjson.JSON;
+import com.ouj.library.net.ResponseStringCallback;
 import com.ouj.library.net.response.BaseResponse;
+
+import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
+
+import okhttp3.Call;
 
 /**
  * Created by liqi on 2016-1-30.
  */
-public abstract class ResponseCallback<T> extends ResponseGenericCallback<BaseResponse<T>> {
+public abstract class ResponseCallback<T> extends ResponseStringCallback {
 
-    public abstract void onResponse(int code, T response);
+    private Class<?> cl;
 
-    public abstract void onResponseError(int code, String message);
+    public ResponseCallback() {
+        this.cl = (Class<?>) ((ParameterizedType) getClass()
+                .getGenericSuperclass()).getActualTypeArguments()[0];
+    }
+
+    public abstract void onResponse(int code, T response) throws Exception;
+
+    public void onResponseError(int code, String message) throws Exception {
+
+    }
 
     @Override
-    public void onResponseEntity(BaseResponse<T> response) {
+    public void onResponse(String responseStr) throws Exception {
+        BaseResponse response = JSON.parseObject(responseStr, BaseResponse.class);
         if (response.result == 1) {
-            onResponse(response.code, response.data);
+            Object o = response.data;
+            if (o != null)
+                onResponse(response.code, (T) JSON.parseObject(response.data.toString(), this.cl));
+            else
+                onResponse(response.code, null);
         } else {
             onResponseError(response.code, response.msg);
         }
     }
 
+    @Override
+    public void onFailure(Call call, IOException e) {
+
+    }
 }
