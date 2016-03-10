@@ -1,5 +1,6 @@
 package com.ouj.library.net.extend;
 
+import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
@@ -28,7 +29,7 @@ public abstract class ResponseCallback<T> extends ResponseStringCallback {
     public abstract void onResponse(int code, T response) throws Exception;
 
     public void onResponseError(int code, String message) throws Exception {
-        if(code < 0){
+        if (code < 0) {
             Toast.makeText(BaseApplication.app, message, Toast.LENGTH_SHORT).show();
         }
     }
@@ -38,11 +39,15 @@ public abstract class ResponseCallback<T> extends ResponseStringCallback {
         JSONObject jsonObject = new JSONObject(responseStr);
         int code = jsonObject.optInt("code", 0);
         if (jsonObject.optInt("result", 0) == 1) {
-            String data = jsonObject.optString("data");
-            if (data != null)
-                onResponse(code, (T) JSON.parseObject(data, this.cl));
-            else
+            if (jsonObject.has("data")) {
+                String data = jsonObject.optString("data");
+                if (!TextUtils.isEmpty(data))
+                    onResponse(code, (T) JSON.parseObject(data, this.cl));
+                else
+                    onResponse(code, null);
+            } else {
                 onResponse(code, null);
+            }
         } else {
             onResponseError(code, jsonObject.optString("msg"));
         }
