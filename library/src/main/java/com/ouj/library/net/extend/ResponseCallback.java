@@ -1,8 +1,12 @@
 package com.ouj.library.net.extend;
 
+import android.widget.Toast;
+
 import com.alibaba.fastjson.JSON;
+import com.ouj.library.BaseApplication;
 import com.ouj.library.net.ResponseStringCallback;
-import com.ouj.library.net.response.BaseResponse;
+
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
@@ -24,20 +28,23 @@ public abstract class ResponseCallback<T> extends ResponseStringCallback {
     public abstract void onResponse(int code, T response) throws Exception;
 
     public void onResponseError(int code, String message) throws Exception {
-
+        if(code < 0){
+            Toast.makeText(BaseApplication.app, message, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
     public void onResponse(String responseStr) throws Exception {
-        BaseResponse response = JSON.parseObject(responseStr, BaseResponse.class);
-        if (response.result == 1) {
-            Object o = response.data;
-            if (o != null)
-                onResponse(response.code, (T) JSON.parseObject(response.data.toString(), this.cl));
+        JSONObject jsonObject = new JSONObject(responseStr);
+        int code = jsonObject.optInt("code", 0);
+        if (jsonObject.optInt("result", 0) == 1) {
+            String data = jsonObject.optString("data");
+            if (data != null)
+                onResponse(code, (T) JSON.parseObject(data, this.cl));
             else
-                onResponse(response.code, null);
+                onResponse(code, null);
         } else {
-            onResponseError(response.code, response.msg);
+            onResponseError(code, jsonObject.optString("msg"));
         }
     }
 

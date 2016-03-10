@@ -20,7 +20,7 @@ android {
 }
 
 def androidSupportVersion = '23.2.0'
-def okhttpVersion = '3.1.2'
+def okhttpVersion = '3.2.0'
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])

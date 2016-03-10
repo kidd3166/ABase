@@ -1,9 +1,11 @@
 package com.ouj.library.net;
 
 import android.content.Context;
+import android.os.Handler;
 import android.text.TextUtils;
 
 import com.alibaba.fastjson.JSON;
+import com.ouj.library.BaseApplication;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,8 +45,11 @@ public class OKHttp {
                     .build();
         }
     };
+    private static Handler mainHandler = null;
 
     public static void init(Context context, List<Interceptor> netWorkinterceptors, List<Interceptor> interceptors, boolean isGzip, long timeout, int cacheSize) {
+        mainHandler = new Handler(context.getMainLooper());
+
         int totalCacheSize = cacheSize * 1024 * 1024;
         Cache cache = new Cache(new File(context.getCacheDir(), "okhttp"), totalCacheSize);
 
@@ -109,15 +114,31 @@ public class OKHttp {
                 call = client.newCall(request.newBuilder().tag(tag).cacheControl(CacheControl.FORCE_NETWORK).build());
                 call.enqueue(new Callback() {
                     @Override
-                    public void onFailure(Call call, IOException e) {
-                        callback.onFailure(call, e);
-                        callback.onFinish();
+                    public void onFailure(final Call call, final IOException e) {
+                        if (mainHandler != null)
+                            mainHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    callback.onFailure(call, e);
+                                    callback.onFinish();
+                                }
+                            });
                     }
 
                     @Override
-                    public void onResponse(Call call, Response response) throws IOException {
-                        callback.onResponse(call, response);
-                        callback.onFinish();
+                    public void onResponse(final Call call, final Response response) throws IOException {
+                        if (mainHandler != null)
+                            mainHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        callback.onResponse(call, response);
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                    callback.onFinish();
+                                }
+                            });
                     }
                 });
                 break;
@@ -178,15 +199,31 @@ public class OKHttp {
                             client.newCall(request.newBuilder().cacheControl(CacheControl.FORCE_NETWORK).build()).enqueue(new Callback() {
                                 @Override
                                 public void onFailure(Call call, IOException e) {
-                                    callback.onFinish();
+                                    if (mainHandler != null)
+                                        mainHandler.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                callback.onFinish();
+                                            }
+                                        });
                                 }
 
                                 @Override
-                                public void onResponse(Call call, Response networkResponse) throws IOException {
-                                    if (networkResponse.isSuccessful()) {
-                                        callback.onResponse(call, networkResponse);
-                                    }
-                                    callback.onFinish();
+                                public void onResponse(final Call call, final Response networkResponse) throws IOException {
+                                    if (mainHandler != null)
+                                        mainHandler.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                try {
+                                                    if (networkResponse.isSuccessful()) {
+                                                        callback.onResponse(call, networkResponse);
+                                                    }
+                                                } catch (IOException e) {
+                                                    e.printStackTrace();
+                                                }
+                                                callback.onFinish();
+                                            }
+                                        });
                                 }
                             });
                         } else {
@@ -259,15 +296,31 @@ public class OKHttp {
     private void enqueueRequest(Request request, CacheControl cacheControl, final ResponseCallback callback) {
         client.newCall(request.newBuilder().cacheControl(cacheControl).build()).enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
-                callback.onFailure(call, e);
-                callback.onFinish();
+            public void onFailure(final Call call, final IOException e) {
+                if (mainHandler != null)
+                    mainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callback.onFailure(call, e);
+                            callback.onFinish();
+                        }
+                    });
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                callback.onResponse(call, response);
-                callback.onFinish();
+            public void onResponse(final Call call, final Response response) throws IOException {
+                if (mainHandler != null)
+                    mainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                callback.onResponse(call, response);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            callback.onFinish();
+                        }
+                    });
             }
         });
     }
