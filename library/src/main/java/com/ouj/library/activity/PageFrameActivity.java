@@ -1,6 +1,6 @@
 package com.ouj.library.activity;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,16 +14,14 @@ import com.ouj.library.R;
  */
 public class PageFrameActivity extends AppCompatActivity {
 
-    public final static String EXTRA_TITLE = "title";
     public final static String EXTRA_CLASS = "fragmentClassName";
 
-    public static void launchActivity(Activity activity, String title, String fragmentClassName, Bundle extras) {
-        Intent intent = new Intent(activity, PageFrameActivity.class);
-        intent.putExtra(EXTRA_TITLE, title);
+    public static void launchActivity(Context context, String fragmentClassName, Bundle extras) {
+        Intent intent = new Intent(context, PageFrameActivity.class);
         intent.putExtra(EXTRA_CLASS, fragmentClassName);
         if (extras != null)
             intent.putExtras(extras);
-        activity.startActivity(intent);
+        context.startActivity(intent);
     }
 
     @Override
@@ -33,7 +31,6 @@ public class PageFrameActivity extends AppCompatActivity {
 
         Intent data = getIntent();
         if (data != null) {
-            String title = data.getStringExtra(EXTRA_TITLE);
             String fragmentClassName = data.getStringExtra(EXTRA_CLASS);
             Fragment fragment = null;
             try {
@@ -43,7 +40,6 @@ public class PageFrameActivity extends AppCompatActivity {
             }
             if (fragment != null) {
                 Bundle args = new Bundle();
-                args.putString(EXTRA_TITLE, title);
                 if (getIntent() != null && getIntent().getExtras() != null) {
                     args.putAll(getIntent().getExtras());
                 }
