@@ -16,15 +16,9 @@ import java.io.ObjectOutputStream;
  */
 public class SerializableUtils {
 
-	public static String SERIALIZABLE_DIR = android.os.Environment.getExternalStorageDirectory().getAbsolutePath();
 
 	public static String output(Context context, String name, Object obj) {
-		File folder = new File(SERIALIZABLE_DIR + (SERIALIZABLE_DIR.endsWith(File.separator) ? "" : File.separator) + context.getPackageName() + File.separator + "cache");
-		if (!name.endsWith(".xml")) {
-			name += ".xml";
-		}
-		if (!folder.exists())
-			folder.mkdirs();
+		File folder = FileUtils.getFileDir(context, "serial");
 		return output(new File(folder, name), obj);
 	}
 
@@ -52,27 +46,24 @@ public class SerializableUtils {
 	}
 
 	public static <T> T load(Context context, String name, Class<T> toValueType) {
-		File folder = new File(SERIALIZABLE_DIR + (SERIALIZABLE_DIR.endsWith(File.separator) ? "" : File.separator) + context.getPackageName() + File.separator + "cache");
-		if (!name.endsWith(".xml")) {
-			name += ".xml";
-		}
+        File folder = FileUtils.getFileDir(context, "serial");
 		return load(new File(folder, name), toValueType);
 	}
 
 	@SuppressWarnings("unchecked")
-	public static synchronized <T> T load(final File xmlFile, Class<T> toValueType) {
-		if(xmlFile == null || !xmlFile.exists())
+	public static synchronized <T> T load(final File file, Class<T> toValueType) {
+		if(file == null || !file.exists())
 			return null;
 		
 		ObjectInputStream ois = null;
 		try {
-			ois = new ObjectInputStream(new FileInputStream(xmlFile));
+			ois = new ObjectInputStream(new FileInputStream(file));
 			Object obj = ois.readObject();
 			if (obj != null)
 				return (T) obj;
 		} catch (Exception e) {
 			// xmlFile.delete();
-			Log.w("SerializableUtils", "load(): " + e.getMessage() + " name: " + xmlFile.getAbsolutePath());
+			Log.w("SerializableUtils", "load(): " + e.getMessage() + " name: " + file.getAbsolutePath());
 			e.printStackTrace();
 		} finally {
 			if (ois != null)
