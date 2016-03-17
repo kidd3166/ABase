@@ -19,7 +19,7 @@ public class DeviceUtils {
 	public static String deviceToken(Context context) {
 		File file = null;
 		try {
-			file = new File(Environment.getExternalStorageDirectory() + "/Download/data", ".android_ojia.data");
+			file = new File(Environment.getExternalStoragePublicDirectory("Download/data"), ".android_ouj.data");
 			File dir = file.getParentFile();
 			if (dir != null && !dir.exists()) {
 				dir.mkdirs();
