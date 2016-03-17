@@ -192,9 +192,19 @@ public class OKHttp {
                     }
 
                     @Override
-                    public void onResponse(Call call, Response cacheResponse) throws IOException {
+                    public void onResponse(final Call call, final Response cacheResponse) throws IOException {
                         if (cacheResponse.isSuccessful()) {
-                            callback.onResponse(call, cacheResponse);
+                            if (mainHandler != null)
+                                mainHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            callback.onResponse(call, cacheResponse);
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                        callback.onFinish();    }
+                                });
                             //  Log.i("TEST", "cacheResponse: " + cacheResponse.body().string());
                             client.newCall(request.newBuilder().cacheControl(CacheControl.FORCE_NETWORK).build()).enqueue(new Callback() {
                                 @Override
