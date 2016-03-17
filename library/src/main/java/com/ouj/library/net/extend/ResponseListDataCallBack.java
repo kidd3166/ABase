@@ -17,7 +17,7 @@ public abstract class ResponseListDataCallBack<T extends RefreshPtrHelper.DataSt
 
     @Override
     public void onStart() {
-        if (statefulLayout.getState() == StatefulLayout.State.EMPTY) {
+        if (statefulLayout.getState() != StatefulLayout.State.CONTENT) {
             statefulLayout.showProgress();
         }
     }

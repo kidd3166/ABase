@@ -75,7 +75,7 @@ public class StatefulLayout extends FrameLayout {
             mCustomOfflineText = a.getString(R.styleable.StatefulLayout_offlineText);
 
         // get initial state if set
-        mInitialState = State.EMPTY;
+        mInitialState = State.PROGRESS;
 
         if (a.hasValue(R.styleable.StatefulLayout_offlineImageDrawable)) {
             mCustomOfflineDrawableId = a.getResourceId(R.styleable.StatefulLayout_offlineImageDrawable, 0);
