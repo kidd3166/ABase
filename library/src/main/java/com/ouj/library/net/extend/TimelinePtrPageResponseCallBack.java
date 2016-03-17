@@ -7,7 +7,7 @@ import com.ouj.library.widget.StatefulLayout;
 /**
  * Created by liqi on 2016-2-22.
  */
-public abstract class TimelinePtrPageResponseCallBack<T extends TimelineResponse> extends ResponseCallback<TimelineResponse> {
+public abstract class TimelinePtrPageResponseCallBack<T extends TimelineResponse> extends ResponseCallback<T> {
 
     private TimelinePtrHelper ptrHelper;
     private StatefulLayout statefulLayout;
@@ -26,7 +26,7 @@ public abstract class TimelinePtrPageResponseCallBack<T extends TimelineResponse
     }
 
     @Override
-    public void onResponse(int code, TimelineResponse response) {
+    public void onResponse(int code, T response) {
         ptrHelper.handleResponse(response);
     }
 

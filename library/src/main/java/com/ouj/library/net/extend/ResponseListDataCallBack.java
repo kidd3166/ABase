@@ -1,43 +1,39 @@
 package com.ouj.library.net.extend;
 
 import com.ouj.library.helper.RefreshPtrHelper;
-import com.ouj.library.net.response.PageResponse;
 import com.ouj.library.widget.StatefulLayout;
 
 /**
  * Created by liqi on 2016-2-22.
  */
-public abstract class RefreshPtrPageResponseCallBack<T extends PageResponse> extends ResponseCallback<T> {
+public abstract class ResponseListDataCallBack<T extends RefreshPtrHelper.DataStore> extends ResponseCallback<T> {
 
-    private RefreshPtrHelper ptrHelper;
     private StatefulLayout statefulLayout;
+    private int count;
 
-    public RefreshPtrPageResponseCallBack(RefreshPtrHelper ptrHelper, StatefulLayout statefulLayout) {
-        this.ptrHelper = ptrHelper;
+    public ResponseListDataCallBack(StatefulLayout statefulLayout) {
         this.statefulLayout = statefulLayout;
     }
 
     @Override
     public void onStart() {
-        int itemCount = ptrHelper.getCount();
-        if (itemCount == 0) {
+        if (statefulLayout.getState() == StatefulLayout.State.EMPTY) {
             statefulLayout.showProgress();
         }
     }
 
     @Override
     public void onResponse(int code, T response) {
-        ptrHelper.handleResponse(response);
+        this.count = response.getCount();
     }
 
     @Override
     public void onFinish() {
-        int itemCount = ptrHelper.getCount();
+        int itemCount = this.count;
         if (itemCount == 0) {
             statefulLayout.showEmpty();
         } else {
             statefulLayout.showContent();
         }
-        ptrHelper.getPtrFrameLayout().refreshComplete();
     }
 }

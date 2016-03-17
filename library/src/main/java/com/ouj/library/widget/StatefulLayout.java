@@ -37,14 +37,12 @@ public class StatefulLayout extends FrameLayout {
     private OnStateChangeListener mOnStateChangeListener;
     private boolean mInitialized;
 
-
     public interface State {
         int CONTENT = 0;
         int PROGRESS = 1;
         int OFFLINE = 2;
         int EMPTY = 3;
     }
-
 
     public interface OnStateChangeListener {
         void onStateChange(View v, int state);
@@ -77,7 +75,7 @@ public class StatefulLayout extends FrameLayout {
             mCustomOfflineText = a.getString(R.styleable.StatefulLayout_offlineText);
 
         // get initial state if set
-        mInitialState = 0;
+        mInitialState = State.EMPTY;
 
         if (a.hasValue(R.styleable.StatefulLayout_offlineImageDrawable)) {
             mCustomOfflineDrawableId = a.getResourceId(R.styleable.StatefulLayout_offlineImageDrawable, 0);
