@@ -1,18 +1,14 @@
 package com.ouj.library;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.pm.PackageManager;
-import android.os.Build;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
-import android.util.SparseArray;
+import android.support.v7.app.AppCompatDialogFragment;
 
 import com.ouj.library.event.ActivityEvent;
 import com.ouj.library.event.OnForegroundEvent;
@@ -73,4 +69,30 @@ public class BaseActivity extends AppCompatActivity {
         }, permissions);
     }
 
+    protected void showProgressDialog(int stringRes) {
+        showProgressDialog(getString(stringRes));
+    }
+
+    protected void showProgressDialog(final String message) {
+        AppCompatDialogFragment dialog = new AppCompatDialogFragment() {
+
+            @Override
+            public Dialog onCreateDialog(Bundle savedInstanceState) {
+                ProgressDialog progressDialog = new ProgressDialog(getActivity());
+                progressDialog.setCanceledOnTouchOutside(false);
+                progressDialog.dismiss();
+                progressDialog.setMessage(message);
+                return progressDialog;
+            }
+        };
+        dialog.show(getSupportFragmentManager(), "progressDialog");
+    }
+
+    protected void dismissProgressDialog() {
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag("fragment_dialog");
+        if (fragment != null) {
+            DialogFragment df = (DialogFragment) fragment;
+            df.dismiss();
+        }
+    }
 }
