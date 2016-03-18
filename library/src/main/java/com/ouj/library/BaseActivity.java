@@ -81,7 +81,6 @@ public class BaseActivity extends AppCompatActivity {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
                 ProgressDialog progressDialog = new ProgressDialog(getActivity());
                 progressDialog.setCanceledOnTouchOutside(false);
-                progressDialog.dismiss();
                 progressDialog.setMessage(message);
                 return progressDialog;
             }
