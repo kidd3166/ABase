@@ -44,6 +44,7 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        dismissProgressDialog();
         EventBus.getDefault().unregister(this);
         OKHttp.cancelTag(this);
         super.onDestroy();
