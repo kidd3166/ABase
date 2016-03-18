@@ -29,6 +29,7 @@ public class BaseApplication extends Application implements Application.Activity
     public static final String SP_KEY_DEBUG = "debug";
     public static final String SP_KEY_TOKEN = "token";
 
+    public static String DES_KEY = "hi_yd~go!";
     public static String APP_ID;
     public static String APP_UID;
     public static String APP_TOKEN;
