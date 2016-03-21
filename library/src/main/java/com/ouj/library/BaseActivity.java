@@ -36,6 +36,32 @@ public class BaseActivity extends AppCompatActivity {
         return this;
     }
 
+    public void showProgressDialog(int stringRes) {
+        showProgressDialog(getString(stringRes));
+    }
+
+    public void showProgressDialog(final String message) {
+        AppCompatDialogFragment dialog = new AppCompatDialogFragment() {
+
+            @Override
+            public Dialog onCreateDialog(Bundle savedInstanceState) {
+                ProgressDialog progressDialog = new ProgressDialog(getActivity());
+                progressDialog.setCanceledOnTouchOutside(false);
+                progressDialog.setMessage(message);
+                return progressDialog;
+            }
+        };
+        dialog.show(getSupportFragmentManager(), "progressDialog");
+    }
+
+    public void dismissProgressDialog() {
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag("progressDialog");
+        if (fragment != null) {
+            DialogFragment df = (DialogFragment) fragment;
+            df.dismiss();
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,29 +96,5 @@ public class BaseActivity extends AppCompatActivity {
         }, permissions);
     }
 
-    protected void showProgressDialog(int stringRes) {
-        showProgressDialog(getString(stringRes));
-    }
 
-    protected void showProgressDialog(final String message) {
-        AppCompatDialogFragment dialog = new AppCompatDialogFragment() {
-
-            @Override
-            public Dialog onCreateDialog(Bundle savedInstanceState) {
-                ProgressDialog progressDialog = new ProgressDialog(getActivity());
-                progressDialog.setCanceledOnTouchOutside(false);
-                progressDialog.setMessage(message);
-                return progressDialog;
-            }
-        };
-        dialog.show(getSupportFragmentManager(), "progressDialog");
-    }
-
-    protected void dismissProgressDialog() {
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag("progressDialog");
-        if (fragment != null) {
-            DialogFragment df = (DialogFragment) fragment;
-            df.dismiss();
-        }
-    }
 }
