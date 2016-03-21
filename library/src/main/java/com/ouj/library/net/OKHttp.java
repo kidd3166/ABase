@@ -107,7 +107,35 @@ public class OKHttp {
         switch (cacheType) {
             case CacheType.ONLY_CACHED:
                 call = client.newCall(request.newBuilder().tag(tag).cacheControl(CacheControl.FORCE_CACHE).build());
-                call.enqueue(callback);
+                call.enqueue(new Callback() {
+                    @Override
+                    public void onFailure(final Call call, final IOException e) {
+                        if (mainHandler != null)
+                            mainHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    callback.onFailure(call, e);
+                                    callback.onFinish();
+                                }
+                            });
+                    }
+
+                    @Override
+                    public void onResponse(final Call call, final Response response) throws IOException {
+                        if (mainHandler != null)
+                            mainHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        callback.onResponse(call, response);
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                    callback.onFinish();
+                                }
+                            });
+                    }
+                });
                 break;
             case CacheType.ONLY_NETWORK:
                 callback.onStart();

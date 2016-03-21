@@ -89,7 +89,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     protected void dismissProgressDialog() {
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag("fragment_dialog");
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag("progressDialog");
         if (fragment != null) {
             DialogFragment df = (DialogFragment) fragment;
             df.dismiss();
