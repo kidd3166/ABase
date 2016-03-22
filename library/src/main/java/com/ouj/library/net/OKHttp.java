@@ -180,10 +180,20 @@ public class OKHttp {
                     }
 
                     @Override
-                    public void onResponse(Call call, Response response) throws IOException {
+                    public void onResponse(final Call call, final Response response) throws IOException {
                         if (response.isSuccessful()) {
-                            callback.onResponse(call, response);
-                            callback.onFinish();
+                            if (mainHandler != null)
+                                mainHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            callback.onResponse(call, response);
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                        callback.onFinish();
+                                    }
+                                });
                         } else {
                             enqueueRequest(request, CacheControl.FORCE_NETWORK, callback);
                         }
