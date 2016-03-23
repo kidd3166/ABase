@@ -25,7 +25,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        OKHttp.init(getContext(), null, null, false, 30000, 50);
+        OKHttp.init(getContext(), null, null, true, 30000, 50);
     }
 
     public void test() throws Exception {

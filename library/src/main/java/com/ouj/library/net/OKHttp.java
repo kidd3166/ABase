@@ -6,6 +6,8 @@ import android.text.TextUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.ouj.library.BaseApplication;
+import com.ouj.library.net.body.GzipResponseBody;
+import com.ouj.library.net.body.ProgressResponseBody;
 
 import java.io.File;
 import java.io.IOException;
@@ -241,7 +243,8 @@ public class OKHttp {
                                         } catch (IOException e) {
                                             e.printStackTrace();
                                         }
-                                        callback.onFinish();    }
+                                        callback.onFinish();
+                                    }
                                 });
                             //  Log.i("TEST", "cacheResponse: " + cacheResponse.body().string());
                             client.newCall(request.newBuilder().cacheControl(CacheControl.FORCE_NETWORK).build()).enqueue(new Callback() {
@@ -392,9 +395,12 @@ public class OKHttp {
             Request compressedRequest = originalRequest.newBuilder()
                     .header("Accept-Encoding", "gzip")
 //                    .header("Content-Encoding", "gzip")
-                    .method(originalRequest.method(), gzip(originalRequest.body()))
+//                    .method(originalRequest.method(), gzip(originalRequest.body()))
                     .build();
-            return chain.proceed(compressedRequest);
+            Response response = chain.proceed(compressedRequest);
+            return response.newBuilder()
+                    .body(new GzipResponseBody(response.body()))
+                    .build();
         }
 
         private RequestBody gzip(final RequestBody body) {
