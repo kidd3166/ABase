@@ -2,12 +2,8 @@ package com.ouj.library.net;
 
 import android.content.Context;
 import android.os.Handler;
-import android.text.TextUtils;
 
 import com.alibaba.fastjson.JSON;
-import com.ouj.library.BaseApplication;
-import com.ouj.library.net.body.GzipResponseBody;
-import com.ouj.library.net.body.ProgressResponseBody;
 
 import java.io.File;
 import java.io.IOException;
@@ -397,10 +393,7 @@ public class OKHttp {
 //                    .header("Content-Encoding", "gzip")
 //                    .method(originalRequest.method(), gzip(originalRequest.body()))
                     .build();
-            Response response = chain.proceed(compressedRequest);
-            return response.newBuilder()
-                    .body(new GzipResponseBody(response.body()))
-                    .build();
+            return chain.proceed(compressedRequest);
         }
 
         private RequestBody gzip(final RequestBody body) {

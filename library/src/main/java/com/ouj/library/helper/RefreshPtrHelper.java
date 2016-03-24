@@ -211,12 +211,12 @@ public class RefreshPtrHelper {
         this.autoLoad = autoLoad;
     }
 
-    public void setmWrapAdapter(boolean wrapAdapter) {
-        this.mWrapAdapter = mWrapAdapter;
+    public void setWrapAdapter(boolean wrapAdapter) {
+        this.mWrapAdapter = wrapAdapter;
     }
 
     public void setFooter(boolean footer) {
-        this.mFooter = mFooter;
+        this.mFooter = footer;
         this.mWrapAdapter=true;
     }
 
