@@ -68,6 +68,16 @@ public class OKHttp {
         }
         if (isGzip) {
             builder.addInterceptor(new GzipRequestInterceptor());
+            builder.addNetworkInterceptor(new Interceptor() {
+                @Override
+                public Response intercept(Chain chain) throws IOException {
+                    Response response = chain.proceed(chain.request());
+                    if (response.header("Content-Encoding") != null && response.header("Content-Encoding").contains("gzip")) {
+                        return response.newBuilder().body(new GzipResponseBody(response.body())).build();
+                    }
+                    return response;
+                }
+            });
         }
         client = builder.build();
     }
@@ -385,21 +395,12 @@ public class OKHttp {
         @Override
         public Response intercept(Chain chain) throws IOException {
             Request originalRequest = chain.request();
-//            if (originalRequest.body() == null || originalRequest.header("Content-Encoding") != null) {
-//                return chain.proceed(originalRequest);
-//            }
-
             Request compressedRequest = originalRequest.newBuilder()
                     .header("Accept-Encoding", "gzip")
 //                    .header("Content-Encoding", "gzip")
 //                    .method(originalRequest.method(), gzip(originalRequest.body()))
                     .build();
-            Response response = chain.proceed(compressedRequest);
-            if(response.header("Content-Encoding") != null && response.header("Content-Encoding").contains("gzip")){
-                return response.newBuilder().body(new GzipResponseBody(response.body())).build();
-            }
-            return response;
-//            return chain.proceed(compressedRequest);
+            return chain.proceed(compressedRequest);
         }
 
         private RequestBody gzip(final RequestBody body) {
