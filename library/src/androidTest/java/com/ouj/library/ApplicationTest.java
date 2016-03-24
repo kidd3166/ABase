@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.ouj.library.net.OKHttp;
 import com.ouj.library.net.extend.ResponseCallback;
+import com.ouj.library.util.ToastUtils;
 
 import org.json.JSONObject;
 
@@ -29,12 +30,10 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
     }
 
     public void test() throws Exception {
-        Request request = new Request.Builder().url("http://test.api.hikeep.oxzj.net/course/all.do").build();
-        new OKHttp.Builder(this).cacheType(OKHttp.CacheType.ONLY_NETWORK).build().execute(request);
-        new OKHttp.Builder(this).build().enqueue(request, new ResponseCallback<String>() {
+        Request request = new Request.Builder().url("http://test.api.hikeep.oxzj.net/dlapi/course/15/test_15_1458028099324.json?&ver=1&os=2&channel=null&uid=100006&token=722ff301-16cf-4bea-987a-1cff4815233b").build();
+        new OKHttp.Builder(this).cacheType(OKHttp.CacheType.ONLY_NETWORK).build().enqueue(request, new ResponseCallback<String>() {
             @Override
             public void onResponse(int code, String response) {
-
                 Log.d("d", response.toString() + "");
             }
 

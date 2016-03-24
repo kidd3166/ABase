@@ -11,16 +11,22 @@ import okhttp3.Response;
 /**
  * Created by liqi on 2016-1-30.
  */
-public abstract class ResponseStringCallback extends ResponseCallback {
+public abstract class ResponseStringCallback extends ResponseCallback<String> {
 
     private String responseData;
 
     public abstract void onResponse(String response) throws Exception;
 
     @Override
+    public String parseNetworkResponse(Response response) throws Exception {
+        return response.body().string();
+    }
+
+    @Override
     public void onResponse(Call call, Response response) throws IOException {
         try {
             String data = response.body().string();
+            System.out.println(data);
             if (!TextUtils.isEmpty(responseData)) {
                 if (!data.equals(responseData)) {
                     responseData = null;

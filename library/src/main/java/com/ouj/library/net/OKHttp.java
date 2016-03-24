@@ -44,10 +44,10 @@ public class OKHttp {
                     .build();
         }
     };
-    private static Handler mainHandler = null;
+    private static Handler mDelivery = null;
 
     public static void init(Context context, List<Interceptor> netWorkinterceptors, List<Interceptor> interceptors, boolean isGzip, long timeout, int cacheSize) {
-        mainHandler = new Handler(context.getMainLooper());
+        mDelivery = new Handler(context.getMainLooper());
 
         int totalCacheSize = cacheSize * 1024 * 1024;
         Cache cache = new Cache(new File(context.getCacheDir(), "okhttp"), totalCacheSize);
@@ -118,31 +118,18 @@ public class OKHttp {
                 call = client.newCall(request.newBuilder().tag(tag).cacheControl(CacheControl.FORCE_CACHE).build());
                 call.enqueue(new Callback() {
                     @Override
-                    public void onFailure(final Call call, final IOException e) {
-                        if (mainHandler != null)
-                            mainHandler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    callback.onFailure(call, e);
-                                    callback.onFinish();
-                                }
-                            });
+                    public void onFailure(Call call, IOException e) {
+                        sendFailResultCallback(call, e, callback);
                     }
 
                     @Override
                     public void onResponse(final Call call, final Response response) throws IOException {
-                        if (mainHandler != null)
-                            mainHandler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        callback.onResponse(call, response);
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                    callback.onFinish();
-                                }
-                            });
+                        try {
+                            sendSuccessResultCallback(callback.parseNetworkResponse(response), callback);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        sendFinish(callback);
                     }
                 });
                 break;
@@ -152,30 +139,17 @@ public class OKHttp {
                 call.enqueue(new Callback() {
                     @Override
                     public void onFailure(final Call call, final IOException e) {
-                        if (mainHandler != null)
-                            mainHandler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    callback.onFailure(call, e);
-                                    callback.onFinish();
-                                }
-                            });
+                        sendFailResultCallback(call, e, callback);
                     }
 
                     @Override
                     public void onResponse(final Call call, final Response response) throws IOException {
-                        if (mainHandler != null)
-                            mainHandler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        callback.onResponse(call, response);
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                    callback.onFinish();
-                                }
-                            });
+                        try {
+                            sendSuccessResultCallback(callback.parseNetworkResponse(response), callback);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        sendFinish(callback);
                     }
                 });
                 break;
@@ -191,18 +165,12 @@ public class OKHttp {
                     @Override
                     public void onResponse(final Call call, final Response response) throws IOException {
                         if (response.isSuccessful()) {
-                            if (mainHandler != null)
-                                mainHandler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        try {
-                                            callback.onResponse(call, response);
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
-                                        callback.onFinish();
-                                    }
-                                });
+                            try {
+                                sendSuccessResultCallback(callback.parseNetworkResponse(response), callback);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            sendFinish(callback);
                         } else {
                             enqueueRequest(request, CacheControl.FORCE_NETWORK, callback);
                         }
@@ -221,8 +189,12 @@ public class OKHttp {
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
                         if (response.isSuccessful()) {
-                            callback.onResponse(call, response);
-                            callback.onFinish();
+                            try {
+                                sendSuccessResultCallback(callback.parseNetworkResponse(response), callback);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            sendFinish(callback);
                         } else {
                             enqueueRequest(request, CacheControl.FORCE_CACHE, callback);
                         }
@@ -241,47 +213,48 @@ public class OKHttp {
                     @Override
                     public void onResponse(final Call call, final Response cacheResponse) throws IOException {
                         if (cacheResponse.isSuccessful()) {
-                            if (mainHandler != null)
-                                mainHandler.post(new Runnable() {
+                            Object o = null;
+                            try {
+                                o = callback.parseNetworkResponse(cacheResponse);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            if (o == null) {
+                                enqueueRequest(request, CacheControl.FORCE_NETWORK, callback);
+                                return;
+                            }
+
+                            final Object cacheBody = o;
+                            if (mDelivery != null)
+                                mDelivery.post(new Runnable() {
                                     @Override
                                     public void run() {
                                         try {
-                                            callback.onResponse(call, cacheResponse);
-                                        } catch (IOException e) {
+                                            callback.onResponse(cacheBody);
+                                        } catch (Exception e) {
                                             e.printStackTrace();
                                         }
-                                        callback.onFinish();
                                     }
                                 });
                             //  Log.i("TEST", "cacheResponse: " + cacheResponse.body().string());
                             client.newCall(request.newBuilder().cacheControl(CacheControl.FORCE_NETWORK).build()).enqueue(new Callback() {
                                 @Override
                                 public void onFailure(Call call, IOException e) {
-                                    if (mainHandler != null)
-                                        mainHandler.post(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                callback.onFinish();
-                                            }
-                                        });
+                                    sendFailResultCallback(call, e, callback);
                                 }
 
                                 @Override
                                 public void onResponse(final Call call, final Response networkResponse) throws IOException {
-                                    if (mainHandler != null)
-                                        mainHandler.post(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                try {
-                                                    if (networkResponse.isSuccessful()) {
-                                                        callback.onResponse(call, networkResponse);
-                                                    }
-                                                } catch (IOException e) {
-                                                    e.printStackTrace();
-                                                }
-                                                callback.onFinish();
-                                            }
-                                        });
+                                    try {
+                                        if (networkResponse.isSuccessful()) {
+                                            Object networkBody = callback.parseNetworkResponse(networkResponse);
+                                            if (networkBody != null && !networkBody.equals(cacheBody))
+                                                sendSuccessResultCallback(networkBody, callback);
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                    sendFinish(callback);
                                 }
                             });
                         } else {
@@ -340,6 +313,41 @@ public class OKHttp {
         return null;
     }
 
+    private void sendFailResultCallback(final Call call, final IOException e, final ResponseCallback callback) {
+        if (callback == null) return;
+
+        mDelivery.post(new Runnable() {
+            @Override
+            public void run() {
+                callback.onFailure(call, e);
+                callback.onFinish();
+            }
+        });
+    }
+
+    private void sendSuccessResultCallback(final Object object, final ResponseCallback callback) {
+        if (callback == null) return;
+        mDelivery.post(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    callback.onResponse(object);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void sendFinish(final ResponseCallback callback) {
+        if (callback == null) return;
+        mDelivery.post(new Runnable() {
+            @Override
+            public void run() {
+                callback.onFinish();
+            }
+        });
+    }
 
     private Response executeCacheRequest(Request request) throws IOException {
         Response response = client.newCall(request.newBuilder().cacheControl(CacheControl.FORCE_CACHE).build()).execute();
@@ -355,30 +363,17 @@ public class OKHttp {
         client.newCall(request.newBuilder().cacheControl(cacheControl).build()).enqueue(new Callback() {
             @Override
             public void onFailure(final Call call, final IOException e) {
-                if (mainHandler != null)
-                    mainHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            callback.onFailure(call, e);
-                            callback.onFinish();
-                        }
-                    });
+                sendFailResultCallback(call, e, callback);
             }
 
             @Override
             public void onResponse(final Call call, final Response response) throws IOException {
-                if (mainHandler != null)
-                    mainHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                callback.onResponse(call, response);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                            callback.onFinish();
-                        }
-                    });
+                try {
+                    sendSuccessResultCallback(callback.parseNetworkResponse(response), callback);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                sendFinish(callback);
             }
         });
     }
