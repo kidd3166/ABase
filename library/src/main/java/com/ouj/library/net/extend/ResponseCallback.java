@@ -29,7 +29,7 @@ public abstract class ResponseCallback<T> extends ResponseStringCallback {
     public abstract void onResponse(int code, T response) throws Exception;
 
     public void onResponseError(int code, String message) throws Exception {
-        if (code < 0) {
+        if (code != 0) {
             Toast.makeText(BaseApplication.app, BaseApplication.APP_DEBUG ? String.format("%d: %s", code, message) : message, Toast.LENGTH_SHORT).show();
         }
     }
