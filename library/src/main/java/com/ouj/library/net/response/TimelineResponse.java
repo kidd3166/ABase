@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Created by liqi on 2016-2-22.
  */
-public abstract   class TimelineResponse implements Serializable, ResponseItems{
+public abstract class TimelineResponse extends PageResponse  {
 
     public int next;
     public String timeline;
