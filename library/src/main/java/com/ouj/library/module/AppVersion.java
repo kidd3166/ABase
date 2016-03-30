@@ -56,7 +56,7 @@ public class AppVersion implements DialogInterface.OnDismissListener {
                 .add("platform", "android")
                 .build();
         Request request = new Request.Builder()
-                .url("https://en.wikipedia.org/w/index.php")
+                .url("http://" + (BaseApplication.APP_DEBUG ? "test.base.api.oxzj.net" : "base.api.ouj.com") + "/upgrade/checkVersion.do")
                 .post(formBody)
                 .build();
         if (needLoading) {

@@ -34,7 +34,7 @@ public class RefreshPtrHelper {
     protected DataStore mDataStore;
     protected int currentPage, resultCount;
     protected boolean hasMore, loadMore, autoLoad = true, isRefresh;
-    protected boolean mWrapAdapter, mFooter;
+    protected boolean mWrapAdapter = true, mFooter = true;
 
     public static interface Listener {
         public void onRefresh(String page, boolean pullToRefresh);
@@ -103,20 +103,23 @@ public class RefreshPtrHelper {
                         if (!loadMore && autoLoad) {
                             loadMore = true;
                             isRefresh = false;
-                            mfooterTips.setText("");
-                            mfooterProgress.setVisibility(View.VISIBLE);
+                            if (mfooterTips != null)
+                                mfooterTips.setText("");
+                            if (mfooterProgress != null)
+                                mfooterProgress.setVisibility(View.VISIBLE);
                             onRefresh(false);
                         }
                     }
                 }
             };
             mRecyclerView.addOnScrollListener(new LoadMoreOnScrollListener(loadMoreListener));
-            mfooterTips.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    loadMoreListener.onLoadMore(mRecyclerView);
-                }
-            });
+            if (mfooterTips != null)
+                mfooterTips.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        loadMoreListener.onLoadMore(mRecyclerView);
+                    }
+                });
         }
 
         mPtrFrameLayout.setPtrHandler(new PtrHandler() {
@@ -128,12 +131,15 @@ public class RefreshPtrHelper {
             @Override
             public void onRefreshBegin(PtrFrameLayout frame) {
                 onRefreshPrepare();
-                mfooterTips.setText("");
-                mfooterProgress.setVisibility(View.INVISIBLE);
+                if (mfooterTips != null)
+                    mfooterTips.setText("");
+                if (mfooterProgress != null)
+                    mfooterProgress.setVisibility(View.INVISIBLE);
                 isRefresh = true;
                 onRefresh(true);
             }
         });
+        mPtrFrameLayout.autoRefresh(true);
     }
 
     public int getCount() {
@@ -186,11 +192,14 @@ public class RefreshPtrHelper {
     }
 
     protected void handleNoMore() {
-        if (!this.hasMore)
-            mfooterTips.setText("没了~");
-        else
-            mfooterTips.setText("");
-        mfooterProgress.setVisibility(View.INVISIBLE);
+        if (mfooterTips != null) {
+            if (!this.hasMore)
+                mfooterTips.setText("没了~");
+            else
+                mfooterTips.setText("");
+        }
+        if (mfooterProgress != null)
+            mfooterProgress.setVisibility(View.INVISIBLE);
     }
 
     protected void onRefreshPrepare() {
@@ -217,7 +226,7 @@ public class RefreshPtrHelper {
 
     public void setFooter(boolean footer) {
         this.mFooter = footer;
-        this.mWrapAdapter=true;
+        this.mWrapAdapter = true;
     }
 
 }

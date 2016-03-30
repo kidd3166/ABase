@@ -7,12 +7,12 @@ import com.ouj.library.widget.StatefulLayout;
 /**
  * Created by liqi on 2016-2-22.
  */
-public abstract class RefreshPtrPageResponseCallBack<T extends PageResponse> extends ResponseCallback<T> {
+public abstract class ResponsePageCallBack<T extends PageResponse, R extends RefreshPtrHelper> extends ResponseCallback<T> {
 
-    private RefreshPtrHelper ptrHelper;
+    private R ptrHelper;
     private StatefulLayout statefulLayout;
 
-    public RefreshPtrPageResponseCallBack(RefreshPtrHelper ptrHelper, StatefulLayout statefulLayout) {
+    public ResponsePageCallBack(R ptrHelper, StatefulLayout statefulLayout) {
         this.ptrHelper = ptrHelper;
         this.statefulLayout = statefulLayout;
     }
