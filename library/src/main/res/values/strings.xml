@@ -1,4 +1,4 @@
 <resources>
-    <string name="sfl_default_placeholder_empty">No Data</string>
-    <string name="sfl_default_placeholder_offline">No Network</string>
+    <string name="sfl_default_placeholder_empty">没有数据哦~</string>
+    <string name="sfl_default_placeholder_offline">网络连接异常</string>
 </resources>
