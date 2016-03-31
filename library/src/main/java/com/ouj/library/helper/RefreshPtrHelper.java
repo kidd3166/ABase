@@ -33,7 +33,8 @@ public class RefreshPtrHelper {
     protected Listener mListener;
     protected DataStore mDataStore;
     protected int currentPage, resultCount;
-    protected boolean hasMore, loadMore, autoLoad = true, isRefresh;
+    protected boolean hasMore, loadMore, autoLoadMore = true, isRefresh;
+    protected boolean autoRefresh = true;
     protected boolean mWrapAdapter = true, mFooter = true;
 
     public static interface Listener {
@@ -100,7 +101,7 @@ public class RefreshPtrHelper {
                 @Override
                 public void onLoadMore(RecyclerView recyclerView) {
                     if (hasMore) {
-                        if (!loadMore && autoLoad) {
+                        if (!loadMore && autoLoadMore) {
                             loadMore = true;
                             isRefresh = false;
                             if (mfooterTips != null)
@@ -122,11 +123,7 @@ public class RefreshPtrHelper {
                 });
         }
 
-        mPtrFrameLayout.setPtrHandler(new PtrHandler() {
-            @Override
-            public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
-                return PtrDefaultHandler.checkContentCanBePulledDown(frame, content, header);
-            }
+        mPtrFrameLayout.setPtrHandler(new PtrDefaultHandler() {
 
             @Override
             public void onRefreshBegin(PtrFrameLayout frame) {
@@ -139,7 +136,8 @@ public class RefreshPtrHelper {
                 onRefresh(true);
             }
         });
-        mPtrFrameLayout.autoRefresh(true);
+        if (autoRefresh)
+            mPtrFrameLayout.autoRefresh(true);
     }
 
     public int getCount() {
@@ -205,7 +203,7 @@ public class RefreshPtrHelper {
     protected void onRefreshPrepare() {
         hasMore = false;
         loadMore = false;
-        autoLoad = true;
+        autoLoadMore = true;
         currentPage = 0;
     }
 
@@ -216,8 +214,12 @@ public class RefreshPtrHelper {
         mListener.onRefresh(String.valueOf(page), pullToRefresh);
     }
 
-    public void setAutoLoad(boolean autoLoad) {
-        this.autoLoad = autoLoad;
+    public void setAutoLoadMore(boolean autoLoad) {
+        this.autoLoadMore = autoLoad;
+    }
+
+    public void setAutoRefresh(boolean autoRefresh) {
+        this.autoRefresh = autoRefresh;
     }
 
     public void setWrapAdapter(boolean wrapAdapter) {
