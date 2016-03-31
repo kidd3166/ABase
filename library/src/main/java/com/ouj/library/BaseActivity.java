@@ -41,17 +41,22 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void showProgressDialog(final String message) {
-        AppCompatDialogFragment dialog = new AppCompatDialogFragment() {
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag("progressDialog");
+        if (fragment != null) {
+            ((ProgressDialog) ((DialogFragment) fragment).getDialog()).setMessage(message);
+        } else {
+            AppCompatDialogFragment dialog = new AppCompatDialogFragment() {
 
-            @Override
-            public Dialog onCreateDialog(Bundle savedInstanceState) {
-                ProgressDialog progressDialog = new ProgressDialog(getActivity());
-                progressDialog.setCanceledOnTouchOutside(false);
-                progressDialog.setMessage(message);
-                return progressDialog;
-            }
-        };
-        dialog.show(getSupportFragmentManager(), "progressDialog");
+                @Override
+                public Dialog onCreateDialog(Bundle savedInstanceState) {
+                    ProgressDialog progressDialog = new ProgressDialog(getActivity());
+                    progressDialog.setCanceledOnTouchOutside(false);
+                    progressDialog.setMessage(message);
+                    return progressDialog;
+                }
+            };
+            dialog.show(getSupportFragmentManager(), "progressDialog");
+        }
     }
 
     public void dismissProgressDialog() {
