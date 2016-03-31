@@ -58,7 +58,7 @@ public class BaseActivity extends AppCompatActivity {
         Fragment fragment = getSupportFragmentManager().findFragmentByTag("progressDialog");
         if (fragment != null) {
             DialogFragment df = (DialogFragment) fragment;
-            df.dismiss();
+            df.dismissAllowingStateLoss();
         }
     }
 
