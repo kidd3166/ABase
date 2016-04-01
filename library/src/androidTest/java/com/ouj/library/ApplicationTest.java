@@ -4,6 +4,7 @@ import android.app.Application;
 import android.test.ApplicationTestCase;
 import android.util.Log;
 
+import com.ouj.library.module.AppVersion;
 import com.ouj.library.net.OKHttp;
 import com.ouj.library.net.extend.ResponseCallback;
 import com.ouj.library.util.ToastUtils;
@@ -43,5 +44,9 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
             }
 
         });
+    }
+
+    public void testUpload() throws Exception {
+//        AppVersion appVersion = new AppVersion(getApplication());
     }
 }

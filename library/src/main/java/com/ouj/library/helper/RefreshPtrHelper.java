@@ -174,10 +174,12 @@ public class RefreshPtrHelper {
         if (responseItems == null)
             return;
 
-        int originalItemCount = mDataStore.getCount();
         List items = responseItems.getItems();
         if (items != null && !items.isEmpty()) {
+            int originalItemCount = mDataStore.getCount();
             mDataStore.setItems(items, this.isRefresh);
+            if(this.isRefresh)
+                originalItemCount = 0;
             RecyclerView.Adapter<?> adapter = mRecyclerView.getAdapter();
             if (adapter != null) {
                 if (originalItemCount == 0) {
