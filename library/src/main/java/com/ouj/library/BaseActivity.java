@@ -9,6 +9,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDialogFragment;
+import android.view.View;
 
 import com.ouj.library.event.ActivityEvent;
 import com.ouj.library.event.OnForegroundEvent;
@@ -34,6 +35,10 @@ public class BaseActivity extends AppCompatActivity {
 
     public BaseActivity getActivity() {
         return this;
+    }
+
+    public void onClickBack(View v){
+        onBackPressed();
     }
 
     public void showProgressDialog(int stringRes) {
