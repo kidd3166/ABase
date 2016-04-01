@@ -9,7 +9,7 @@ import in.srain.cube.views.ptr.PtrFrameLayout;
 /**
  * Created by liqi on 2016-2-22.
  */
-public class TimelinePtrHelper<T> extends RefreshPtrHelper {
+public class TimelinePtrHelper extends RefreshPtrHelper<TimelineResponse> {
 
     private String timeline = null;
 

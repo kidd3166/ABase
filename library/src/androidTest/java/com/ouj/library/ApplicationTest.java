@@ -4,9 +4,12 @@ import android.app.Application;
 import android.test.ApplicationTestCase;
 import android.util.Log;
 
+import com.ouj.library.helper.TimelinePtrHelper;
 import com.ouj.library.module.AppVersion;
 import com.ouj.library.net.OKHttp;
 import com.ouj.library.net.extend.ResponseCallback;
+import com.ouj.library.net.extend.ResponsePageCallBack;
+import com.ouj.library.net.response.TimelineResponse;
 import com.ouj.library.util.ToastUtils;
 
 import org.json.JSONObject;
@@ -45,7 +48,13 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
 
         });
     }
+    public void test1() throws Exception {
+        Request request = new Request.Builder().url(" http://test.api.hikeep.oxzj.net/post/getNewList.do?&ver=1&os=2&channel=ouj&uid=100004&token=f18935a1-d485-410c-8405-c8b4ce87a288").build();
+        new OKHttp.Builder(this).cacheType(OKHttp.CacheType.ONLY_NETWORK).build().enqueue(request, new ResponsePageCallBack<Time, TimelinePtrHelper>(null, null) {
 
+
+        });
+    }
     public void testUpload() throws Exception {
 //        AppVersion appVersion = new AppVersion(getApplication());
     }

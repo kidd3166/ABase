@@ -23,7 +23,7 @@ import in.srain.cube.views.ptr.PtrHandler;
 /**
  * Created by liqi on 2016-2-22.
  */
-public class RefreshPtrHelper {
+public class RefreshPtrHelper<T extends PageResponse> {
 
     protected PtrFrameLayout mPtrFrameLayout;
     protected RecyclerView mRecyclerView;
@@ -157,7 +157,7 @@ public class RefreshPtrHelper {
         return mPtrFrameLayout;
     }
 
-    public void handleResponse(PageResponse response) {
+    public void handleResponse(T response) {
         if (response != null) {
             Page page = response.page;
             if (page != null) {
