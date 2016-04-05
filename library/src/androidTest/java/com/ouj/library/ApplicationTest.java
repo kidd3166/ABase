@@ -49,11 +49,11 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
         });
     }
     public void test1() throws Exception {
-        Request request = new Request.Builder().url(" http://test.api.hikeep.oxzj.net/post/getNewList.do?&ver=1&os=2&channel=ouj&uid=100004&token=f18935a1-d485-410c-8405-c8b4ce87a288").build();
-        new OKHttp.Builder(this).cacheType(OKHttp.CacheType.ONLY_NETWORK).build().enqueue(request, new ResponsePageCallBack<Time, TimelinePtrHelper>(null, null) {
-
-
-        });
+//        Request request = new Request.Builder().url(" http://test.api.hikeep.oxzj.net/post/getNewList.do?&ver=1&os=2&channel=ouj&uid=100004&token=f18935a1-d485-410c-8405-c8b4ce87a288").build();
+//        new OKHttp.Builder(this).cacheType(OKHttp.CacheType.ONLY_NETWORK).build().enqueue(request, new ResponsePageCallBack<Time, TimelinePtrHelper>(null, null) {
+//
+//
+//        });
     }
     public void testUpload() throws Exception {
 //        AppVersion appVersion = new AppVersion(getApplication());
