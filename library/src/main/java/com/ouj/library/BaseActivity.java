@@ -106,5 +106,4 @@ public class BaseActivity extends AppCompatActivity {
         }, permissions);
     }
 
-
 }
