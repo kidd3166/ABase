@@ -123,21 +123,23 @@ public class RefreshPtrHelper<T extends PageResponse> {
                 });
         }
 
-        mPtrFrameLayout.setPtrHandler(new PtrDefaultHandler() {
+        if (mPtrFrameLayout != null) {
+            mPtrFrameLayout.setPtrHandler(new PtrDefaultHandler() {
 
-            @Override
-            public void onRefreshBegin(PtrFrameLayout frame) {
-                onRefreshPrepare();
-                if (mfooterTips != null)
-                    mfooterTips.setText("");
-                if (mfooterProgress != null)
-                    mfooterProgress.setVisibility(View.INVISIBLE);
-                isRefresh = true;
-                onRefresh(true);
-            }
-        });
-        if (autoRefresh)
-            mPtrFrameLayout.autoRefresh(true);
+                @Override
+                public void onRefreshBegin(PtrFrameLayout frame) {
+                    onRefreshPrepare();
+                    if (mfooterTips != null)
+                        mfooterTips.setText("");
+                    if (mfooterProgress != null)
+                        mfooterProgress.setVisibility(View.INVISIBLE);
+                    isRefresh = true;
+                    onRefresh(true);
+                }
+            });
+            if (autoRefresh)
+                mPtrFrameLayout.autoRefresh(true);
+        }
     }
 
     public int getCount() {
@@ -178,7 +180,7 @@ public class RefreshPtrHelper<T extends PageResponse> {
         if (items != null && !items.isEmpty()) {
             int originalItemCount = mDataStore.getCount();
             mDataStore.setItems(items, this.isRefresh);
-            if(this.isRefresh)
+            if (this.isRefresh)
                 originalItemCount = 0;
             RecyclerView.Adapter<?> adapter = mRecyclerView.getAdapter();
             if (adapter != null) {

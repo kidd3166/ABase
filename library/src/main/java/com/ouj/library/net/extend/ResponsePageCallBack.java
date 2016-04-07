@@ -19,9 +19,11 @@ public abstract class ResponsePageCallBack<T extends PageResponse, R extends Ref
 
     @Override
     public void onStart() {
-        int itemCount = ptrHelper.getCount();
-        if (itemCount == 0) {
-            statefulLayout.showProgress();
+        if (ptrHelper != null) {
+            int itemCount = ptrHelper.getCount();
+            if (itemCount == 0) {
+                statefulLayout.showProgress();
+            }
         }
     }
 
@@ -38,6 +40,8 @@ public abstract class ResponsePageCallBack<T extends PageResponse, R extends Ref
         } else {
             statefulLayout.showContent();
         }
-        ptrHelper.getPtrFrameLayout().refreshComplete();
+        if (ptrHelper != null) {
+            ptrHelper.getPtrFrameLayout().refreshComplete();
+        }
     }
 }
