@@ -81,11 +81,9 @@ public class RefreshPtrHelper<T extends PageResponse> {
 
             RecyclerView.LayoutManager layoutManager = mRecyclerView.getLayoutManager();
             if (layoutManager instanceof GridLayoutManager) {
-                GridLayoutManager original = (GridLayoutManager) layoutManager;
-                GridLayoutManager gridLayoutManager = new GridLayoutManager(mRecyclerView.getContext(), original.getSpanCount());
+                GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
                 gridLayoutManager.setSpanSizeLookup(
-                        wrapAdapter.createSpanSizeLookup(original.getSpanCount()));
-                mRecyclerView.setLayoutManager(gridLayoutManager);
+                        wrapAdapter.createSpanSizeLookup(gridLayoutManager.getSpanCount()));
             }
 
             if (mFooter) {
@@ -197,7 +195,7 @@ public class RefreshPtrHelper<T extends PageResponse> {
                 if (originalItemCount == 0) {
                     adapter.notifyDataSetChanged();
                 } else {
-                    adapter.notifyItemRangeInserted(originalItemCount, adapter.getItemCount() - 1);
+                    adapter.notifyItemRangeChanged(originalItemCount, adapter.getItemCount() - 1);
                 }
             }
         }
