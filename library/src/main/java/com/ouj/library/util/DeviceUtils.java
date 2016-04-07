@@ -37,7 +37,7 @@ public class DeviceUtils {
 			if (file != null)
 				file.delete();
 			e.printStackTrace();
-			return "-1";
+			return uniqueId(context);
 		}
 	}
 
