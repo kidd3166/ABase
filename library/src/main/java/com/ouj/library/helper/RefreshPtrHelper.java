@@ -128,18 +128,26 @@ public class RefreshPtrHelper<T extends PageResponse> {
 
                 @Override
                 public void onRefreshBegin(PtrFrameLayout frame) {
-                    onRefreshPrepare();
-                    if (mfooterTips != null)
-                        mfooterTips.setText("");
-                    if (mfooterProgress != null)
-                        mfooterProgress.setVisibility(View.INVISIBLE);
-                    isRefresh = true;
-                    onRefresh(true);
+                    onRefresh();
                 }
             });
             if (autoRefresh)
                 mPtrFrameLayout.autoRefresh(true);
+        } else {
+            if (autoRefresh) {
+                onRefresh();
+            }
         }
+    }
+
+    public void onRefresh() {
+        onRefreshPrepare();
+        if (mfooterTips != null)
+            mfooterTips.setText("");
+        if (mfooterProgress != null)
+            mfooterProgress.setVisibility(View.INVISIBLE);
+        isRefresh = true;
+        onRefresh(true);
     }
 
     public int getCount() {
