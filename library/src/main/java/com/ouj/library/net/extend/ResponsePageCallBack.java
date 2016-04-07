@@ -29,18 +29,20 @@ public abstract class ResponsePageCallBack<T extends PageResponse, R extends Ref
 
     @Override
     public void onResponse(int code, T response) {
-        ptrHelper.handleResponse(response);
+        if (ptrHelper != null) {
+            ptrHelper.handleResponse(response);
+        }
     }
 
     @Override
     public void onFinish() {
-        int itemCount = ptrHelper.getCount();
-        if (itemCount == 0) {
-            statefulLayout.showEmpty();
-        } else {
-            statefulLayout.showContent();
-        }
         if (ptrHelper != null) {
+            int itemCount = ptrHelper.getCount();
+            if (itemCount == 0) {
+                statefulLayout.showEmpty();
+            } else {
+                statefulLayout.showContent();
+            }
             ptrHelper.getPtrFrameLayout().refreshComplete();
         }
     }
