@@ -79,19 +79,20 @@ public class RefreshPtrHelper<T extends PageResponse> {
                 resetAdapter = true;
             }
 
+            RecyclerView.LayoutManager layoutManager = mRecyclerView.getLayoutManager();
+            if (layoutManager instanceof GridLayoutManager) {
+                GridLayoutManager original = (GridLayoutManager) layoutManager;
+                GridLayoutManager gridLayoutManager = new GridLayoutManager(mRecyclerView.getContext(), original.getSpanCount());
+                gridLayoutManager.setSpanSizeLookup(
+                        wrapAdapter.createSpanSizeLookup(original.getSpanCount()));
+                mRecyclerView.setLayoutManager(gridLayoutManager);
+            }
+
             if (mFooter) {
                 View footer = LayoutInflater.from(mRecyclerView.getContext()).inflate(R.layout.base__view_recycler_view_footer, mRecyclerView, false);
                 mfooterTips = (TextView) footer.findViewById(R.id.footer_tips);
                 mfooterProgress = (ProgressBar) footer.findViewById(R.id.footer_progress);
                 wrapAdapter.addFooter(footer);
-            }
-
-            RecyclerView.LayoutManager layoutManager = mRecyclerView.getLayoutManager();
-            if (layoutManager instanceof GridLayoutManager) {
-                GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
-                gridLayoutManager.setSpanSizeLookup(
-                        wrapAdapter.createSpanSizeLookup(gridLayoutManager.getSpanCount()));
-                mRecyclerView.setLayoutManager(gridLayoutManager);
             }
 
             if (resetAdapter) {
