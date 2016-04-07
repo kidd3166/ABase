@@ -53,7 +53,7 @@ public class BaseApplication extends Application implements Application.Activity
 
     public static void baseInit(Application context) {
         BaseApplication.app = context;
-        APP_ID = ApplicationUtils.getMetadataString(context, "appid");
+        APP_ID = String.valueOf(ApplicationUtils.getMetadataInt(context, "appid"));
         APP_CHANNEL = ApplicationUtils.getMetadataString(context, "UMENG_CHANNEL");
         APP_VERSION = String.valueOf(PackageUtils.getVersionCode(context));
         SharedPrefUtils.put(SP_KEY_APPID, APP_ID);
