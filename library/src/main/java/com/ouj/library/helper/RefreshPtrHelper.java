@@ -86,15 +86,16 @@ public class RefreshPtrHelper<T extends PageResponse> {
                 wrapAdapter.addFooter(footer);
             }
 
-            if (resetAdapter) {
-                mRecyclerView.setAdapter(wrapAdapter);
-            }
-
             RecyclerView.LayoutManager layoutManager = mRecyclerView.getLayoutManager();
             if (layoutManager instanceof GridLayoutManager) {
                 GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
                 gridLayoutManager.setSpanSizeLookup(
                         wrapAdapter.createSpanSizeLookup(gridLayoutManager.getSpanCount()));
+                mRecyclerView.setLayoutManager(gridLayoutManager);
+            }
+
+            if (resetAdapter) {
+                mRecyclerView.setAdapter(wrapAdapter);
             }
 
             final LoadMoreOnScrollListener.Listener loadMoreListener = new LoadMoreOnScrollListener.Listener() {
