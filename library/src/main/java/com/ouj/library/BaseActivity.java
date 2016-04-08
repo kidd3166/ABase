@@ -47,7 +47,7 @@ public class BaseActivity extends AppCompatActivity {
 
     public void showProgressDialog(final String message) {
         Fragment fragment = getSupportFragmentManager().findFragmentByTag("progressDialog");
-        if (fragment != null) {
+        if (fragment != null && ((DialogFragment) fragment).getDialog() != null) {
             ((ProgressDialog) ((DialogFragment) fragment).getDialog()).setMessage(message);
         } else {
             AppCompatDialogFragment dialog = new AppCompatDialogFragment() {
