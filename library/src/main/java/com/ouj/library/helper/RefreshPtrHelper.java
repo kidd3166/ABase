@@ -112,6 +112,7 @@ public class RefreshPtrHelper<T extends PageResponse> {
                     }
                 }
             };
+            mRecyclerView.clearOnScrollListeners();
             mRecyclerView.addOnScrollListener(new LoadMoreOnScrollListener(loadMoreListener));
             if (mfooterTips != null)
                 mfooterTips.setOnClickListener(new View.OnClickListener() {
