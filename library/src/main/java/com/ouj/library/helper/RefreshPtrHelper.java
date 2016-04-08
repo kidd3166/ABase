@@ -18,7 +18,6 @@ import java.util.List;
 
 import in.srain.cube.views.ptr.PtrDefaultHandler;
 import in.srain.cube.views.ptr.PtrFrameLayout;
-import in.srain.cube.views.ptr.PtrHandler;
 
 /**
  * Created by liqi on 2016-2-22.
@@ -213,6 +212,7 @@ public class RefreshPtrHelper<T extends PageResponse> {
         }
         if (mfooterProgress != null)
             mfooterProgress.setVisibility(View.INVISIBLE);
+        this.loadMore = false;
     }
 
     protected void onRefreshPrepare() {
