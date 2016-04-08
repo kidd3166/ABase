@@ -195,7 +195,10 @@ public class RefreshPtrHelper<T extends PageResponse> {
                 if (originalItemCount == 0) {
                     adapter.notifyDataSetChanged();
                 } else {
-                    adapter.notifyItemRangeChanged(originalItemCount, mDataStore.getCount());
+                    if (adapter instanceof WrapAdapter) {
+                        originalItemCount += ((WrapAdapter) adapter).getHeaderCount();
+                    }
+                    adapter.notifyItemRangeChanged(originalItemCount, adapter.getItemCount() - 1);
                 }
             }
         }
