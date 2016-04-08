@@ -197,7 +197,7 @@ public class RefreshPtrHelper<T extends PageResponse> {
                     if (adapter instanceof WrapAdapter) {
                         originalItemCount += ((WrapAdapter) adapter).getHeaderCount();
                     }
-                    adapter.notifyItemRangeChanged(originalItemCount, mDataStore.getCount() - 1);
+                    adapter.notifyItemRangeChanged(originalItemCount, adapter.getItemCount());
                 }
             }
         }
