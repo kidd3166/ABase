@@ -40,6 +40,9 @@ public class BaseActivity extends AppCompatActivity {
     public void onClickBack(View v){
         onBackPressed();
     }
+    public void onClickReload(View v){
+
+    }
 
     public void showProgressDialog(int stringRes) {
         showProgressDialog(getString(stringRes));
