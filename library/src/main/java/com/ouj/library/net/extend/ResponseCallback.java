@@ -67,7 +67,7 @@ public abstract class ResponseCallback<T> extends ResponseStringCallback {
             progressDialog.setCanceledOnTouchOutside(false);
             WindowManager.LayoutParams params =
                     progressDialog.getWindow().getAttributes();
-            params.width = WindowManager.LayoutParams.WRAP_CONTENT;
+            params.width = UIUtils.dip2px(120);
             progressDialog.getWindow().setAttributes(params);
         }
     }
