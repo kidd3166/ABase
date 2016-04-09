@@ -18,6 +18,7 @@ import java.util.List;
 
 import in.srain.cube.views.ptr.PtrDefaultHandler;
 import in.srain.cube.views.ptr.PtrFrameLayout;
+import in.srain.cube.views.ptr.PtrHandler;
 
 /**
  * Created by liqi on 2016-2-22.
@@ -124,7 +125,11 @@ public class RefreshPtrHelper<T extends PageResponse> {
         }
 
         if (mPtrFrameLayout != null) {
-            mPtrFrameLayout.setPtrHandler(new PtrDefaultHandler() {
+            mPtrFrameLayout.setPtrHandler(new PtrHandler() {
+                @Override
+                public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
+                    return RefreshPtrHelper.this.checkCanDoRefresh(frame, content, header);
+                }
 
                 @Override
                 public void onRefreshBegin(PtrFrameLayout frame) {
@@ -202,6 +207,10 @@ public class RefreshPtrHelper<T extends PageResponse> {
                 }
             }
         }
+    }
+
+    protected boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
+        return PtrDefaultHandler.checkContentCanBePulledDown(frame, content, header);
     }
 
     protected void handleNoMore() {
