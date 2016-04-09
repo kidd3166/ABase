@@ -10,9 +10,9 @@ public abstract class BaseLazyFragment extends BaseFragment {
     protected abstract void onLazyLoad();
 
     @Override
-    public void setMenuVisibility(boolean menuVisible) {
-        super.setMenuVisibility(menuVisible);
-        if (menuVisible) {
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
             if (!isLazyLoad) {
                 isLazyLoad = true;
                 onLazyLoad();
