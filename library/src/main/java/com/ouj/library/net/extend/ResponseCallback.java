@@ -1,10 +1,18 @@
 package com.ouj.library.net.extend;
 
+import android.app.Dialog;
+import android.content.Context;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
+import com.ouj.library.BaseActivity;
 import com.ouj.library.BaseApplication;
+import com.ouj.library.R;
 import com.ouj.library.net.ResponseStringCallback;
 
 import org.json.JSONObject;
@@ -20,13 +28,52 @@ import okhttp3.Call;
 public abstract class ResponseCallback<T> extends ResponseStringCallback {
 
     private Class<?> cl;
+    private Context context;
+    private Dialog progressDialog;
 
     public ResponseCallback() {
         this.cl = (Class<?>) ((ParameterizedType) getClass()
                 .getGenericSuperclass()).getActualTypeArguments()[0];
     }
 
+    public ResponseCallback(Context context) {
+        this();
+        this.context = context;
+    }
+
     public abstract void onResponse(int code, T response) throws Exception;
+
+
+    public String getProgressText() {
+        return null;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (context != null) {
+            View v = LayoutInflater.from(context).inflate(R.layout.base__view_progress, null);
+            TextView text = (TextView) v.findViewById(R.id.text);
+            String progressText = getProgressText();
+            if (!TextUtils.isEmpty(progressText)) {
+                text.setText(progressText);
+                text.setVisibility(View.VISIBLE);
+            } else {
+                text.setVisibility(View.GONE);
+            }
+            progressDialog = new AlertDialog.Builder(context).setView(v).show();
+        }
+    }
+
+    @Override
+    public void onFinish() {
+        super.onFinish();
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
+        this.progressDialog = null;
+        this.context = null;
+    }
 
     public void onResponseError(int code, String message) throws Exception {
         if (code != 0) {

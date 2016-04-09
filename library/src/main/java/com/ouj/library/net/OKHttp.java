@@ -202,7 +202,6 @@ public class OKHttp {
                 });
                 break;
             case CacheType.CACHED_AND_NETWORK:
-                callback.onStart();
                 call = client.newCall(request.newBuilder().tag(tag).cacheControl(CacheControl.FORCE_CACHE).build());
                 call.enqueue(new Callback() {
                     @Override
@@ -220,6 +219,17 @@ public class OKHttp {
                                 e.printStackTrace();
                             }
                             if (o == null) {
+                                if (mDelivery != null)
+                                    mDelivery.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            try {
+                                                callback.onStart();
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    });
                                 enqueueRequest(request, CacheControl.FORCE_NETWORK, callback);
                                 return;
                             }
