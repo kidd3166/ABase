@@ -6,6 +6,7 @@ import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,6 +15,7 @@ import com.ouj.library.BaseActivity;
 import com.ouj.library.BaseApplication;
 import com.ouj.library.R;
 import com.ouj.library.net.ResponseStringCallback;
+import com.ouj.library.util.UIUtils;
 
 import org.json.JSONObject;
 
@@ -62,6 +64,11 @@ public abstract class ResponseCallback<T> extends ResponseStringCallback {
                 text.setVisibility(View.GONE);
             }
             progressDialog = new AlertDialog.Builder(context).setView(v).show();
+            progressDialog.setCanceledOnTouchOutside(false);
+            WindowManager.LayoutParams params =
+                    progressDialog.getWindow().getAttributes();
+            params.width = UIUtils.dip2px(70);
+            progressDialog.getWindow().setAttributes(params);
         }
     }
 
