@@ -1,11 +1,12 @@
 package com.ouj.library.net.extend;
 
+import com.ouj.library.helper.RefreshPtrHelper;
 import com.ouj.library.widget.StatefulLayout;
 
 /**
  * Created by liqi on 2016-2-22.
  */
-public abstract class ResponseListDataCallBack<T> extends ResponseCallback<T> {
+public abstract class ResponseListDataCallBack<T extends RefreshPtrHelper.DataStore> extends ResponseCallback<T> {
 
     private StatefulLayout statefulLayout;
     private int count;
@@ -23,7 +24,7 @@ public abstract class ResponseListDataCallBack<T> extends ResponseCallback<T> {
 
     @Override
     public void onResponse(int code, T response) {
-
+        this.count = response.getCount();
     }
 
     @Override

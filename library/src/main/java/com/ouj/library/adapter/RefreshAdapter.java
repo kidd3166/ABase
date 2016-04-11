@@ -25,7 +25,8 @@ public abstract class RefreshAdapter<E, VH extends RecyclerView.ViewHolder> exte
             return;
         if (b)
             items.clear();
-        items.addAll(list);
+        if (list != null && !list.isEmpty())
+            items.addAll(list);
     }
 
     @Override

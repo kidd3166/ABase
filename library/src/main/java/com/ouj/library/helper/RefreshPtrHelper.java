@@ -14,6 +14,7 @@ import com.ouj.library.net.response.Page;
 import com.ouj.library.net.response.PageResponse;
 import com.ouj.library.net.response.ResponseItems;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import in.srain.cube.views.ptr.PtrDefaultHandler;
@@ -188,24 +189,28 @@ public class RefreshPtrHelper<T extends PageResponse> {
     protected void handleItems(ResponseItems responseItems) {
         if (responseItems == null)
             return;
-
+        if (mRecyclerView == null)
+            return;
+        RecyclerView.Adapter<?> adapter = mRecyclerView.getAdapter();
+        if (adapter == null)
+            return;
         List items = responseItems.getItems();
         if (items != null && !items.isEmpty()) {
             int originalItemCount = mDataStore.getCount();
             mDataStore.setItems(items, this.isRefresh);
             if (this.isRefresh)
                 originalItemCount = 0;
-            RecyclerView.Adapter<?> adapter = mRecyclerView.getAdapter();
-            if (adapter != null) {
-                if (originalItemCount == 0) {
-                    adapter.notifyDataSetChanged();
-                } else {
-                    if (adapter instanceof WrapAdapter) {
-                        originalItemCount += ((WrapAdapter) adapter).getHeaderCount();
-                    }
-                    adapter.notifyItemRangeChanged(originalItemCount, adapter.getItemCount());
+            if (originalItemCount == 0) {
+                adapter.notifyDataSetChanged();
+            } else {
+                if (adapter instanceof WrapAdapter) {
+                    originalItemCount += ((WrapAdapter) adapter).getHeaderCount();
                 }
+                adapter.notifyItemRangeChanged(originalItemCount, adapter.getItemCount());
             }
+        } else {
+            mDataStore.setItems(new ArrayList(), this.isRefresh);
+            adapter.notifyDataSetChanged();
         }
     }
 
