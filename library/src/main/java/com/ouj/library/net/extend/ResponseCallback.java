@@ -14,6 +14,7 @@ import com.alibaba.fastjson.JSON;
 import com.ouj.library.BaseActivity;
 import com.ouj.library.BaseApplication;
 import com.ouj.library.R;
+import com.ouj.library.event.LogoutEvent;
 import com.ouj.library.net.ResponseStringCallback;
 import com.ouj.library.util.UIUtils;
 
@@ -22,6 +23,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 
+import de.greenrobot.event.EventBus;
 import okhttp3.Call;
 
 /**
@@ -85,6 +87,11 @@ public abstract class ResponseCallback<T> extends ResponseStringCallback {
     public void onResponseError(int code, String message) throws Exception {
         if (code != 0) {
             Toast.makeText(BaseApplication.app, BaseApplication.APP_DEBUG ? String.format("%d: %s", code, message) : message, Toast.LENGTH_SHORT).show();
+        }
+        if (code == -5) {// 登录失效
+            LogoutEvent event = new LogoutEvent();
+            event.message = message;
+            EventBus.getDefault().post(event);
         }
     }
 
