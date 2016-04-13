@@ -43,6 +43,7 @@ public abstract class PushClient implements WebSocketListener {
 
     /**
      * 接收服务器的内容
+     *
      * @param context
      * @param payload
      */
@@ -50,6 +51,7 @@ public abstract class PushClient implements WebSocketListener {
 
     /**
      * 连接服务器地址
+     *
      * @param context
      * @return
      */
@@ -57,6 +59,7 @@ public abstract class PushClient implements WebSocketListener {
 
     /**
      * 与推送服务器连接后再与业务服务器关联uid,token等信息
+     *
      * @param context
      * @param type
      */
@@ -129,7 +132,7 @@ public abstract class PushClient implements WebSocketListener {
                 }
             }, 10000, 58000, TimeUnit.MILLISECONDS);
 
-            client = new OkHttpClient();
+            client = new OkHttpClient.Builder().connectTimeout(60, TimeUnit.SECONDS).readTimeout(70, TimeUnit.SECONDS).writeTimeout(70, TimeUnit.SECONDS).build();
 
             Request request = new Request.Builder()
                     .url(wsuri)
@@ -207,7 +210,7 @@ public abstract class PushClient implements WebSocketListener {
         ping = 0;
         connecting = false;
         mConnection = null;
-        log(String.format("Status: Connection lost (%d, %s)  ", -1000, e.getMessage()));
+        log(String.format("Status: Connection lost (%d, %s)  ", -1000, e.getMessage()) + (response != null ? response.message() : ""));
     }
 
     @Override
