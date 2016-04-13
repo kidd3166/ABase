@@ -35,6 +35,7 @@ public abstract class PushClient implements WebSocketListener {
 
     private OkHttpClient client;
     private WebSocket mConnection;
+    private WebSocketCall call;
     private ScheduledExecutorService scheduledExecutorService;
     private final Executor writeExecutor = Executors.newSingleThreadExecutor();
 
@@ -138,7 +139,8 @@ public abstract class PushClient implements WebSocketListener {
                     .url(wsuri)
                     .build();
 
-            WebSocketCall.create(client, request).enqueue(this);
+            call = WebSocketCall.create(client, request);
+            call.enqueue(this);
         }
     }
 
