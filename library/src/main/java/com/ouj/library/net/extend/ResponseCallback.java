@@ -11,7 +11,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
-import com.ouj.library.BaseActivity;
 import com.ouj.library.BaseApplication;
 import com.ouj.library.R;
 import com.ouj.library.event.LogoutEvent;
@@ -108,6 +107,9 @@ public abstract class ResponseCallback<T> extends ResponseStringCallback {
                     onResponse(code, null);
             } else {
                 onResponse(code, null);
+            }
+            if (code < 0) {
+                onResponseError(code, jsonObject.optString("msg"));
             }
         } else {
             onResponseError(code, jsonObject.optString("msg"));
