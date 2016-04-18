@@ -74,16 +74,29 @@ public class AppVersion implements DialogInterface.OnDismissListener {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
+                    if(activity == null)
+                        return;
+
                     String responseString = response.body().string();
                     try {
-                        JSONObject responseJson = new JSONObject(responseString);
-                        updateResult(activity, responseJson);
+                        final JSONObject responseJson = new JSONObject(responseString);
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                updateResult(activity, responseJson);
+                            }
+                        });
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    if (progressDialog != null)
-                        progressDialog.dismiss();
-                    progressDialog = null;
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (progressDialog != null)
+                                progressDialog.dismiss();
+                            progressDialog = null;
+                        }
+                    });
                 }
             }
         });

@@ -6,11 +6,10 @@ import android.text.TextUtils;
 
 import com.ouj.library.BaseApplication;
 import com.ouj.library.event.OnForegroundEvent;
+import com.ouj.library.net.OKHttp;
 import com.ouj.library.util.DeviceUtils;
 import com.ouj.library.util.FileUtils;
 import com.ouj.library.util.PackageUtils;
-
-import org.json.JSONObject;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -24,12 +23,18 @@ import java.util.concurrent.PriorityBlockingQueue;
 import java.util.zip.GZIPOutputStream;
 
 import de.greenrobot.event.EventBus;
+import okhttp3.MediaType;
 import okhttp3.MultipartBody;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * Created by Liqi
  */
 class ClickEvent extends Thread {
+
+    public static String UPLOAD_URL = "http://www.hiyd.com/data/batchEvent";
 
     private final PriorityBlockingQueue<ClickLog> mQueue = new PriorityBlockingQueue<ClickLog>();
 
@@ -83,7 +88,7 @@ class ClickEvent extends Thread {
     }
 
     private void uploadLog(final String userId) {
-        if(TextUtils.isEmpty(userId))
+        if (TextUtils.isEmpty(userId))
             return;
 
         new Thread(new Runnable() {
@@ -123,20 +128,20 @@ class ClickEvent extends Thread {
                                 outputFile = f;
                             }
 
-//                            MultipartBody body = new MultipartBody.Builder().addFormDataPart()
-//                            UploadRequest request = new UploadRequest(UrlUtils.getApiUrl() + "/data/upload.do");
-//                            request.addFileParam("dataFile", outputFile);
-//                            JSONObject jsonResult;
-//                            try {
-//                                jsonResult = new JSONObject(request.sync());
-//                                int state = jsonResult.getJSONObject("data").optInt("state");
-//                                LogUtils.d("upload file: " + outputFile.getAbsolutePath() + ", result: " + state);
-//                                if (state == 1) {
-//                                    outputFile.delete();
-//                                }
-//                            } catch (Exception e) {
-//                                e.printStackTrace();
-//                            }
+                            MultipartBody body = new MultipartBody.Builder()
+                                    .addFormDataPart("dataFile", outputFile.getName(), RequestBody.create(MediaType.parse("file/*"), outputFile)).build();
+                            Request request = new Request.Builder()
+                                    .url(UPLOAD_URL)
+                                    .post(body)
+                                    .build();
+                            try {
+                                Response response = new OKHttp.Builder(this).cacheType(OKHttp.CacheType.ONLY_NETWORK).build().execute(request);
+                                if (response.isSuccessful()) {
+                                    outputFile.delete();
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
 
@@ -219,8 +224,8 @@ class ClickEvent extends Thread {
                 mLogFilePathName = endFile.getAbsolutePath();
                 BufferedReader reader = new BufferedReader(new FileReader(endFile));
                 String l = null;
-                while (( l = reader.readLine() )!= null){
-                    line ++;
+                while ((l = reader.readLine()) != null) {
+                    line++;
                 }
                 reader.close();
                 bFlag = true;
@@ -291,10 +296,11 @@ class ClickEvent extends Thread {
     public void checkLogLength() {
         checkLogLength(false);
     }
+
     public void checkLogLength(boolean close) {
         File file = new File(mLogFilePathName);
 //        LogUtils.d("file create time: " + file.lastModified() + " " + (System.currentTimeMillis() - file.lastModified()));
-        if (close || (System.currentTimeMillis() - file.lastModified()) >  60 * 60 * 1000 || (System.currentTimeMillis() - start) > 30 * 60 * 1000 || line > 500 || file.length() >= mFileSize) {
+        if (close || (System.currentTimeMillis() - file.lastModified()) > 60 * 60 * 1000 || (System.currentTimeMillis() - start) > 30 * 60 * 1000 || line > 500 || file.length() >= mFileSize) {
             line = 0;
             start = System.currentTimeMillis();
             try {
@@ -306,8 +312,8 @@ class ClickEvent extends Thread {
             createNewLogFile();
             initLogNameSize();
 //            deleteOldLogFile();
-            if(!close)
-            uploadLog(BaseApplication.APP_UID);
+            if (!close)
+                uploadLog(BaseApplication.APP_UID);
         }
     }
 
@@ -327,7 +333,7 @@ class ClickEvent extends Thread {
 //                deleteOldLogFile();
             } finally {
             }
-            line ++;
+            line++;
             checkLogLength();
         } else {
             initLogNameSize();
@@ -361,7 +367,7 @@ class ClickEvent extends Thread {
     protected static String getDefaultLogPath() {
         try {
             File file = FileUtils.getFileDir(BaseApplication.app, "Logs" + File.separator + "click");
-            if(file != null){
+            if (file != null) {
                 return file.getAbsolutePath();
             }
         } catch (Exception e) {
