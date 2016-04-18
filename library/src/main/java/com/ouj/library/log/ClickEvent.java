@@ -113,7 +113,7 @@ class ClickEvent extends Thread {
                                 outputFile = new File(file, userId + "_" + f.getName() + ".gz");
                                 BufferedOutputStream out = new BufferedOutputStream(new GZIPOutputStream(new FileOutputStream(outputFile)));
                                 Context context = BaseApplication.app;
-                                String head = String.format("userId=%s&sysOS=Android&channel=%s&deviceToken=%s&SysVersion=%d&appVersion=%d\r\n", userId, BaseApplication.APP_CHANNEL, DeviceUtils.deviceToken(context), Build.VERSION.SDK_INT, PackageUtils.getVersion(context));
+                                String head = String.format("userId=%s&sysOS=Android&channel=%s&deviceToken=%s&SysVersion=%s&appVersion=%s\r\n", userId, BaseApplication.APP_CHANNEL, DeviceUtils.deviceToken(context), String.valueOf(Build.VERSION.SDK_INT), PackageUtils.getVersion(context));
                                 out.write(head.getBytes());
                                 String line = null;
                                 while ((line = in.readLine()) != null) {

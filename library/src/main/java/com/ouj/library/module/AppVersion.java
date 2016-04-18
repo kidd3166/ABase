@@ -1,6 +1,7 @@
 package com.ouj.library.module;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -102,7 +103,7 @@ public class AppVersion implements DialogInterface.OnDismissListener {
             final long apkSize = response.apkSize;
             int mustUpdate = response.mustUpdate;
             if (needLoading) {
-                new AlertDialog.Builder(activity).setTitle(versionTitle).setMessage(updateContent).setPositiveButton("升级", new DialogInterface.OnClickListener() {
+                Dialog dialog = new AlertDialog.Builder(activity).setTitle(versionTitle).setMessage(updateContent).setPositiveButton("升级", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         downloadAPK(activity.getApplicationContext(), apkUrl, apkSize);
@@ -113,10 +114,12 @@ public class AppVersion implements DialogInterface.OnDismissListener {
                     public void onClick(DialogInterface dialog, int which) {
 
                     }
-                }).show();
+                }).setCancelable(false).create();
+                dialog.setCanceledOnTouchOutside(false);
+                dialog.show();
             } else {
                 if (mustUpdate == 1) { // 必须升级
-                    new AlertDialog.Builder(activity).setTitle(versionTitle).setMessage(updateContent).setNeutralButton("立即升级", new DialogInterface.OnClickListener() {
+                    Dialog dialog = new AlertDialog.Builder(activity).setTitle(versionTitle).setMessage(updateContent).setNeutralButton("立即升级", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             downloadAPK(activity, apkUrl, apkSize);
@@ -127,9 +130,11 @@ public class AppVersion implements DialogInterface.OnDismissListener {
                         public void onCancel(DialogInterface dialog) {
                             activity.moveTaskToBack(true);
                         }
-                    }).setOnDismissListener(this).show();
+                    }).setCancelable(false).create();
+                    dialog.setCanceledOnTouchOutside(false);
+                    dialog.show();
                 } else {
-                    new AlertDialog.Builder(activity).setTitle(versionTitle).setMessage(updateContent).setPositiveButton("升级", new DialogInterface.OnClickListener() {
+                    Dialog dialog = new AlertDialog.Builder(activity).setTitle(versionTitle).setMessage(updateContent).setPositiveButton("升级", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             downloadAPK(activity, apkUrl, apkSize);
@@ -140,7 +145,9 @@ public class AppVersion implements DialogInterface.OnDismissListener {
                         public void onClick(DialogInterface dialog, int which) {
 
                         }
-                    }).show();
+                    }).setCancelable(false).create();
+                    dialog.setCanceledOnTouchOutside(false);
+                    dialog.show();
                 }
             }
         }
