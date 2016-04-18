@@ -12,6 +12,7 @@ import com.ouj.library.BaseApplication;
 import com.ouj.library.net.OKHttp;
 import com.ouj.library.net.body.ProgressResponseBody;
 import com.ouj.library.net.extend.ResponseCallback;
+import com.ouj.library.util.ToastUtils;
 import com.ouj.library.util.Tool;
 
 import java.io.File;
@@ -150,6 +151,8 @@ public class AppVersion implements DialogInterface.OnDismissListener {
                     dialog.show();
                 }
             }
+        }else {
+            ToastUtils.showToast("已经是最新版本");
         }
     }
 
