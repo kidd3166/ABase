@@ -151,8 +151,9 @@ public class AppVersion implements DialogInterface.OnDismissListener {
                     dialog.show();
                 }
             }
-        }else {
-            ToastUtils.showToast("已经是最新版本");
+        } else {
+            if (this.needLoading)
+                ToastUtils.showToast("已经是最新版本");
         }
     }
 
