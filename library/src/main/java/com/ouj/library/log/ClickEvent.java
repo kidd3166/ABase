@@ -128,8 +128,8 @@ class ClickEvent extends Thread {
                                 outputFile = f;
                             }
 
-                            MultipartBody body = new MultipartBody.Builder()
-                                    .addFormDataPart("dataFile", outputFile.getName(), RequestBody.create(MediaType.parse("file/*"), outputFile)).build();
+                            MultipartBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
+                                    .addFormDataPart("dataFile", outputFile.getName(), RequestBody.create(MediaType.parse("multipart/form-data"), outputFile)).build();
                             Request request = new Request.Builder()
                                     .url(UPLOAD_URL)
                                     .post(body)
