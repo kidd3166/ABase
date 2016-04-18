@@ -108,9 +108,6 @@ public abstract class ResponseCallback<T> extends ResponseStringCallback {
             } else {
                 onResponse(code, null);
             }
-            if (code < 0) {
-                onResponseError(code, jsonObject.optString("msg"));
-            }
         } else {
             onResponseError(code, jsonObject.optString("msg"));
         }
