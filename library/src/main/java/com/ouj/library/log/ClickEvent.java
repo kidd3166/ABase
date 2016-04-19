@@ -35,7 +35,7 @@ import okhttp3.Response;
  */
 class ClickEvent extends Thread {
 
-    public static String UPLOAD_URL = "http://www.hiyd.com/data/batchEvent";
+    public static String UPLOAD_URL = "http://" + (BaseApplication.APP_DEBUG ? "test." : "") + "www.hiyd.com/data/batchEvent";
 
     private final PriorityBlockingQueue<ClickLog> mQueue = new PriorityBlockingQueue<ClickLog>();
 
@@ -129,7 +129,9 @@ class ClickEvent extends Thread {
                             } else {
                                 outputFile = f;
                             }
-
+                            if (outputFile == null)
+                                return;
+                            Log.d("APP", "App uploadLog " + outputFile.getAbsolutePath());
 
                             MultipartBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
                                     .addFormDataPart("dataFile", outputFile.getName(), RequestBody.create(MediaType.parse("multipart/form-data"), outputFile)).build();

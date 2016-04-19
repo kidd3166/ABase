@@ -96,7 +96,6 @@ public class AppVersion implements DialogInterface.OnDismissListener {
     }
 
     private void updateResult(final Activity activity, UpdateResponse response) {
-        Log.d("TEST,", response + "");
         if (response.haveNewVersion > 0) {
             String versionTitle = String.format("发现新版本 v%s", response.versionName);
             String updateContent = response.updateContent;
