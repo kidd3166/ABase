@@ -96,6 +96,8 @@ public abstract class ResponseCallback<T> extends ResponseStringCallback {
 
     @Override
     public void onResponse(String responseStr) throws Exception {
+        if(TextUtils.isEmpty(responseStr))
+            return;
         JSONObject jsonObject = new JSONObject(responseStr);
         int code = jsonObject.optInt("code", 0);
         if (jsonObject.optInt("result", 0) == 1) {
