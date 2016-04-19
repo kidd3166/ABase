@@ -67,8 +67,7 @@ public class OKHttp {
             builder.interceptors().addAll(interceptors);
         }
         if (isGzip) {
-            builder.addInterceptor(new GzipRequestInterceptor());
-            builder.addNetworkInterceptor(new Interceptor() {
+            builder.addInterceptor(new Interceptor() {
                 @Override
                 public Response intercept(Chain chain) throws IOException {
                     Response response = chain.proceed(chain.request());
@@ -78,6 +77,7 @@ public class OKHttp {
                     return response;
                 }
             });
+            builder.addInterceptor(new GzipRequestInterceptor());
         }
         client = builder.build();
     }
