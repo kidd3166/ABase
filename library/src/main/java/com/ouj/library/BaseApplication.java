@@ -100,6 +100,7 @@ public class BaseApplication extends Application implements Application.Activity
         }
         if (wasBackground) {
             EventBus.getDefault().post(new OnForegroundEvent());
+            Log.d("APP", "App on foreground");
         }
     }
 

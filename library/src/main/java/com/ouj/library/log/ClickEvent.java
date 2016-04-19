@@ -3,6 +3,7 @@ package com.ouj.library.log;
 import android.content.Context;
 import android.os.Build;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.ouj.library.BaseApplication;
 import com.ouj.library.event.OnForegroundEvent;
@@ -88,6 +89,7 @@ class ClickEvent extends Thread {
     }
 
     private void uploadLog(final String userId) {
+        Log.d("APP", "App uploadLog " + userId);
         if (TextUtils.isEmpty(userId))
             return;
 

@@ -7,12 +7,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 
+import com.ouj.library.BaseActivity;
 import com.ouj.library.R;
 
 /**
  * Created by Roye on 2016/1/19.
  */
-public class PageFrameActivity extends AppCompatActivity {
+public class PageFrameActivity extends BaseActivity {
 
     public final static String EXTRA_CLASS = "fragmentClassName";
 
