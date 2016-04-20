@@ -146,7 +146,17 @@ public abstract class PushClient implements WebSocketListener {
 
     public void stop(Context context) {
         stopHeartbeat();
+        if(mConnection != null){
+            try {
+                mConnection.close(-997, "stop close");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         mConnection = null;
+        if(call != null)
+            call.cancel();
+        call = null;
         if (client != null)
             client.dispatcher().executorService().shutdown();
     }
