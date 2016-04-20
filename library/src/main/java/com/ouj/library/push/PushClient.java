@@ -148,7 +148,7 @@ public abstract class PushClient implements WebSocketListener {
         stopHeartbeat();
         if(mConnection != null){
             try {
-                mConnection.close(997, "stop close");
+                mConnection.close(4997, "stop close");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -172,11 +172,11 @@ public abstract class PushClient implements WebSocketListener {
                 ping++;
                 if (ping >= 3) {
                     ping = 0;
-                    mConnection.close(999, "ping max");
+                    mConnection.close(4999, "ping max");
                 }
             } catch (Throwable e) {
                 try {
-                    mConnection.close(998, e.getMessage());
+                    mConnection.close(4998, e.getMessage());
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
