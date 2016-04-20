@@ -164,7 +164,7 @@ public class AppVersion implements DialogInterface.OnDismissListener {
             fileDir.mkdirs();
         }
 
-        final File filePath = new File(fileDir, UUID.nameUUIDFromBytes(apkUrl.getBytes()).toString());
+        final File filePath = new File(fileDir, UUID.nameUUIDFromBytes(apkUrl.getBytes()).toString() + ".apk");
         boolean hasDownloaded = filePath.exists() && filePath.length() >= apkSize;
         if (hasDownloaded) {
             Tool.installApk(filePath.getAbsolutePath());
