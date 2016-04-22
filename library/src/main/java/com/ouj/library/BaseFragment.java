@@ -20,7 +20,7 @@ public class BaseFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
+        setRetainInstance(willRetainInstance());
     }
 
     @Override
@@ -45,6 +45,10 @@ public class BaseFragment extends Fragment {
 
     public void onEventMainThread(OnForegroundEvent event) {
 
+    }
+
+    protected boolean willRetainInstance(){
+        return true;
     }
 
     @Override
