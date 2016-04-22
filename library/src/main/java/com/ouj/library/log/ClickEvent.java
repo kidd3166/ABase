@@ -54,6 +54,8 @@ class ClickEvent extends Thread {
     private int line = 0;
     private long start = 0;
 
+    private boolean handleing;
+
     /**
      * LogFile
      *
@@ -92,14 +94,18 @@ class ClickEvent extends Thread {
         Log.d("APP", "App uploadLog " + userId);
         if (TextUtils.isEmpty(userId))
             return;
-
+        if (handleing)
+            return;
+        handleing = true;
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     File file = FileUtils.getFileDir(BaseApplication.app, "Logs" + File.separator + "click");
-                    if (file == null || !file.isDirectory())
+                    if (file == null || !file.isDirectory()) {
+                        handleing = false;
                         return;
+                    }
 
                     File[] files = file.listFiles(new FilenameFilter() {
                         @Override
@@ -154,6 +160,7 @@ class ClickEvent extends Thread {
                     e.printStackTrace();
 
                 }
+                handleing = false;
             }
         }).start();
 
