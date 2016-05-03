@@ -6,9 +6,10 @@
     android:padding="@dimen/sfl_global_keyline_s">
 
     <LinearLayout
+        android:id="@+id/offline_layout" android:padding="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"   android:clickable="true"  android:onClick="onClickReload"
+        android:layout_gravity="center"
         android:orientation="vertical">
 
         <com.ouj.library.widget.TintableImageView
