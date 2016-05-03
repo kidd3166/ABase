@@ -203,10 +203,12 @@ public class RefreshPtrHelper<T extends PageResponse> {
             if (originalItemCount == 0) {
                 adapter.notifyDataSetChanged();
             } else {
+                int footerCount = 1;
                 if (adapter instanceof WrapAdapter) {
                     originalItemCount += ((WrapAdapter) adapter).getHeaderCount();
+                    footerCount = ((WrapAdapter) adapter).getFooterCount();
                 }
-                adapter.notifyItemRangeChanged(originalItemCount, adapter.getItemCount());
+                adapter.notifyItemRangeInserted(originalItemCount, adapter.getItemCount() - footerCount);
             }
         } else {
             mDataStore.setItems(new ArrayList(), this.isRefresh);
