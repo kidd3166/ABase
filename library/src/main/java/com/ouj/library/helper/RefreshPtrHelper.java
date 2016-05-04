@@ -195,8 +195,8 @@ public class RefreshPtrHelper<T extends PageResponse> {
         if (adapter == null)
             return;
         List items = responseItems.getItems();
+        int originalItemCount = mDataStore.getCount();
         if (items != null && !items.isEmpty()) {
-            int originalItemCount = mDataStore.getCount();
             mDataStore.setItems(items, this.isRefresh);
             if (this.isRefresh)
                 originalItemCount = 0;
@@ -209,8 +209,10 @@ public class RefreshPtrHelper<T extends PageResponse> {
                 adapter.notifyItemRangeInserted(originalItemCount, mDataStore.getCount() - originalItemCount);
             }
         } else {
-            mDataStore.setItems(new ArrayList(), this.isRefresh);
-            adapter.notifyDataSetChanged();
+            if(originalItemCount == 0) {
+                mDataStore.setItems(new ArrayList(), this.isRefresh);
+                adapter.notifyDataSetChanged();
+            }
         }
     }
 
