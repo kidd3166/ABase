@@ -209,9 +209,14 @@ public class RefreshPtrHelper<T extends PageResponse> {
                 adapter.notifyItemRangeInserted(originalItemCount, mDataStore.getCount() - originalItemCount);
             }
         } else {
-            if(originalItemCount == 0) {
+            if (this.isRefresh) {
                 mDataStore.setItems(new ArrayList(), this.isRefresh);
                 adapter.notifyDataSetChanged();
+            } else {
+                if (originalItemCount == 0) {
+                    mDataStore.setItems(new ArrayList(), this.isRefresh);
+                    adapter.notifyDataSetChanged();
+                }
             }
         }
     }
@@ -243,7 +248,8 @@ public class RefreshPtrHelper<T extends PageResponse> {
         int page = currentPage;
         if (!pullToRefresh)
             page = currentPage + 1;
-        mListener.onRefresh(String.valueOf(page), pullToRefresh);
+        if (mListener != null)
+            mListener.onRefresh(String.valueOf(page), pullToRefresh);
     }
 
     public void setAutoLoadMore(boolean autoLoad) {

@@ -25,6 +25,7 @@ public class TimelinePtrHelper extends RefreshPtrHelper<TimelineResponse> {
 
     @Override
     protected void onRefresh(boolean pullToRefresh) {
+        if(mListener != null)
         mListener.onRefresh(timeline, pullToRefresh);
     }
 
