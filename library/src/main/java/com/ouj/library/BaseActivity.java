@@ -116,10 +116,12 @@ public class BaseActivity extends AppCompatActivity {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             ProgressDialog progressDialog = new ProgressDialog(getActivity());
-            Bundle args = new Bundle();
-            String message = args.getString("message");
+            Bundle args = getArguments();
+            if (args != null) {
+                String message = args.getString("message");
+                progressDialog.setMessage(message);
+            }
             progressDialog.setCanceledOnTouchOutside(false);
-            progressDialog.setMessage(message);
             return progressDialog;
         }
     }
