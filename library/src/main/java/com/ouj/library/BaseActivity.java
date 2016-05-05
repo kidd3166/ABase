@@ -15,6 +15,7 @@ import com.ouj.library.event.ActivityEvent;
 import com.ouj.library.event.OnForegroundEvent;
 import com.ouj.library.net.OKHttp;
 import com.ouj.library.permission.PermissionHelper;
+import com.ouj.library.util.UIUtils;
 
 import de.greenrobot.event.EventBus;
 
@@ -37,10 +38,11 @@ public class BaseActivity extends AppCompatActivity {
         return this;
     }
 
-    public void onClickBack(View v){
+    public void onClickBack(View v) {
         onBackPressed();
     }
-    public void onClickReload(View v){
+
+    public void onClickReload(View v) {
 
     }
 
@@ -53,16 +55,10 @@ public class BaseActivity extends AppCompatActivity {
         if (fragment != null && ((DialogFragment) fragment).getDialog() != null) {
             ((ProgressDialog) ((DialogFragment) fragment).getDialog()).setMessage(message);
         } else {
-            AppCompatDialogFragment dialog = new AppCompatDialogFragment() {
-
-                @Override
-                public Dialog onCreateDialog(Bundle savedInstanceState) {
-                    ProgressDialog progressDialog = new ProgressDialog(getActivity());
-                    progressDialog.setCanceledOnTouchOutside(false);
-                    progressDialog.setMessage(message);
-                    return progressDialog;
-                }
-            };
+            AppCompatDialogFragment dialog = new ProgressDialogFragment();
+            Bundle args = new Bundle();
+            args.putString("message", message);
+            dialog.setArguments(args);
             dialog.show(getSupportFragmentManager(), "progressDialog");
         }
     }
@@ -79,6 +75,12 @@ public class BaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        UIUtils.init(this);
     }
 
     @Override
@@ -109,4 +111,16 @@ public class BaseActivity extends AppCompatActivity {
         }, permissions);
     }
 
+    public static class ProgressDialogFragment extends AppCompatDialogFragment {
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            ProgressDialog progressDialog = new ProgressDialog(getActivity());
+            Bundle args = new Bundle();
+            String message = args.getString("message");
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.setMessage(message);
+            return progressDialog;
+        }
+    }
 }
