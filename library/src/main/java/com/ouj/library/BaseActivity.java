@@ -16,6 +16,7 @@ import com.ouj.library.event.OnForegroundEvent;
 import com.ouj.library.net.OKHttp;
 import com.ouj.library.permission.PermissionHelper;
 import com.ouj.library.util.UIUtils;
+import com.umeng.analytics.MobclickAgent;
 
 import de.greenrobot.event.EventBus;
 
@@ -80,7 +81,14 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        MobclickAgent.onResume(this);
         UIUtils.init(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 
     @Override
