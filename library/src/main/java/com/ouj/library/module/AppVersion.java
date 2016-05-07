@@ -95,7 +95,7 @@ public class AppVersion implements DialogInterface.OnDismissListener {
 
     }
 
-    private void updateResult(final Activity activity, UpdateResponse response) {
+    private void updateResult(final Activity activity, final UpdateResponse response) {
         if (response.haveNewVersion > 0) {
             String versionTitle = String.format("发现新版本 v%s", response.versionName);
             String updateContent = response.updateContent;
@@ -106,7 +106,7 @@ public class AppVersion implements DialogInterface.OnDismissListener {
                 Dialog dialog = new AlertDialog.Builder(activity).setTitle(versionTitle).setMessage(updateContent).setPositiveButton("升级", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        downloadAPK(activity.getApplicationContext(), apkUrl, apkSize);
+                        downloadAPK(activity.getApplicationContext(), response);
                         dialog.dismiss();
                     }
                 }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -122,7 +122,7 @@ public class AppVersion implements DialogInterface.OnDismissListener {
                     Dialog dialog = new AlertDialog.Builder(activity).setTitle(versionTitle).setMessage(updateContent).setNeutralButton("立即升级", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            downloadAPK(activity, apkUrl, apkSize);
+                            downloadAPK(activity, response);
                             dialog.dismiss();
                         }
                     }).setOnCancelListener(new DialogInterface.OnCancelListener() {
@@ -137,7 +137,7 @@ public class AppVersion implements DialogInterface.OnDismissListener {
                     Dialog dialog = new AlertDialog.Builder(activity).setTitle(versionTitle).setMessage(updateContent).setPositiveButton("升级", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            downloadAPK(activity, apkUrl, apkSize);
+                            downloadAPK(activity, response);
                             dialog.dismiss();
                         }
                     }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -156,15 +156,16 @@ public class AppVersion implements DialogInterface.OnDismissListener {
         }
     }
 
-    public void downloadAPK(final Context context, String apkUrl, long apkSize) {
+    public void downloadAPK(final Context context, final UpdateResponse response) {
         if (downloadProgressDialog != null && downloadProgressDialog.isShowing())
             return;
         File fileDir = new File(context.getFilesDir(), "download");
         if (!fileDir.exists()) {
             fileDir.mkdirs();
         }
-
-        final File filePath = new File(fileDir, UUID.nameUUIDFromBytes(apkUrl.getBytes()).toString() + ".apk");
+        final String apkUrl = response.apkUrl;
+        final long apkSize = response.apkSize;
+        final File filePath = new File(fileDir, UUID.nameUUIDFromBytes(String.format("%s-%s-%d", apkUrl, response.versionName, apkSize).getBytes()).toString() + ".apk");
         boolean hasDownloaded = filePath.exists() && filePath.length() >= apkSize;
         if (hasDownloaded) {
             Tool.installApk(filePath.getAbsolutePath());
