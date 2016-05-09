@@ -103,13 +103,7 @@ public class RefreshPtrHelper<T extends PageResponse> {
                 public void onLoadMore(RecyclerView recyclerView) {
                     if (hasMore) {
                         if (!loadMore && autoLoadMore) {
-                            loadMore = true;
-                            isRefresh = false;
-                            if (mfooterTips != null)
-                                mfooterTips.setText("");
-                            if (mfooterProgress != null)
-                                mfooterProgress.setVisibility(View.VISIBLE);
-                            onRefresh(false);
+                            loadMore();
                         }
                     }
                 }
@@ -154,6 +148,16 @@ public class RefreshPtrHelper<T extends PageResponse> {
             mfooterProgress.setVisibility(View.INVISIBLE);
         isRefresh = true;
         onRefresh(true);
+    }
+
+    public void loadMore() {
+        loadMore = true;
+        isRefresh = false;
+        if (mfooterTips != null)
+            mfooterTips.setText("");
+        if (mfooterProgress != null)
+            mfooterProgress.setVisibility(View.VISIBLE);
+        onRefresh(false);
     }
 
     public int getCount() {
