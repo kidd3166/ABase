@@ -216,6 +216,10 @@ public class RefreshPtrHelper<T extends PageResponse> {
             if (this.isRefresh) {
                 mDataStore.setItems(new ArrayList(), this.isRefresh);
                 adapter.notifyDataSetChanged();
+                if (mfooterTips != null)
+                    mfooterTips.setText("暂无数据");
+                if (mfooterProgress != null)
+                    mfooterProgress.setVisibility(View.INVISIBLE);
             } else {
                 if (originalItemCount == 0) {
                     mDataStore.setItems(new ArrayList(), this.isRefresh);
