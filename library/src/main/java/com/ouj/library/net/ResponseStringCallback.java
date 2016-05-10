@@ -38,7 +38,7 @@ public abstract class ResponseStringCallback extends ResponseCallback<String> {
             } else {
                 onResponse(data);
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
     }
