@@ -239,8 +239,9 @@ public class RefreshPtrHelper<T extends PageResponse> {
                     }else {
                         mfooterTips.setText(R.string.default_footer_end);
                     }
+                }else {
+                    mfooterTips.setText("");
                 }
-                mfooterTips.setText("");
             }else
                 mfooterTips.setText("");
         }
