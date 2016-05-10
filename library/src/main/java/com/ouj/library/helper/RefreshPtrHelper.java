@@ -222,10 +222,6 @@ public class RefreshPtrHelper<T extends PageResponse> {
                     adapter.notifyDataSetChanged();
                 }
             }
-            if (mfooterTips != null)
-                mfooterTips.setText("暂无数据");
-            if (mfooterProgress != null)
-                mfooterProgress.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -235,9 +231,17 @@ public class RefreshPtrHelper<T extends PageResponse> {
 
     protected void handleNoMore() {
         if (mfooterTips != null) {
-            if (!this.hasMore)
-                mfooterTips.setText("没了~");
-            else
+            if (!this.hasMore) {
+                if(mDataStore != null){
+                    int count = mDataStore.getCount();
+                    if(count == 0){
+                        mfooterTips.setText(R.string.sfl_default_placeholder_empty);
+                    }else {
+                        mfooterTips.setText(R.string.default_footer_end);
+                    }
+                }
+                mfooterTips.setText("");
+            }else
                 mfooterTips.setText("");
         }
         if (mfooterProgress != null)
