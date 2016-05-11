@@ -18,15 +18,15 @@ public class TimelinePtrHelper extends RefreshPtrHelper<TimelineResponse> {
     }
 
     @Override
-    protected void onRefreshPrepare() {
-        super.onRefreshPrepare();
-        timeline = null;
-    }
-
-    @Override
     protected void onRefresh(boolean pullToRefresh) {
         if(mListener != null)
         mListener.onRefresh(timeline, pullToRefresh);
+    }
+
+    @Override
+    public void reset() {
+        super.reset();
+        timeline = null;
     }
 
     public void handleResponse(TimelineResponse response) {

@@ -251,10 +251,7 @@ public class RefreshPtrHelper<T extends PageResponse> {
     }
 
     protected void onRefreshPrepare() {
-        hasMore = false;
-        loadMore = false;
-        autoLoadMore = true;
-        currentPage = 0;
+        reset();
     }
 
     protected void onRefresh(boolean pullToRefresh) {
@@ -263,6 +260,13 @@ public class RefreshPtrHelper<T extends PageResponse> {
             page = currentPage + 1;
         if (mListener != null)
             mListener.onRefresh(String.valueOf(page), pullToRefresh);
+    }
+
+    public void reset(){
+        hasMore = false;
+        loadMore = false;
+        autoLoadMore = true;
+        currentPage = 0;
     }
 
     public void setAutoLoadMore(boolean autoLoad) {
