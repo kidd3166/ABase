@@ -15,9 +15,8 @@ import com.ouj.library.BaseApplication;
 import com.ouj.library.R;
 import com.ouj.library.event.LogoutEvent;
 import com.ouj.library.net.ResponseStringCallback;
+import com.ouj.library.net.response.BaseResponse;
 import com.ouj.library.util.UIUtils;
-
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
@@ -96,23 +95,20 @@ public abstract class ResponseCallback<T> extends ResponseStringCallback {
 
     @Override
     public void onResponse(String responseStr) throws Exception {
-        if(TextUtils.isEmpty(responseStr))
+        if (TextUtils.isEmpty(responseStr))
             return;
-        JSONObject jsonObject = new JSONObject(responseStr);
-        int code = jsonObject.optInt("code", 0);
-        if (jsonObject.optInt("result", 0) == 1) {
-            if (jsonObject.has("data")) {
-                String data = jsonObject.optString("data");
-                if (!TextUtils.isEmpty(data))
-                    onResponse(code, (T) JSON.parseObject(data, this.cl));
-                else
-                    onResponse(code, null);
+        BaseResponse<String> response = JSON.parseObject(responseStr, BaseResponse.class);
+        if (response.result == 1) {
+            if (!TextUtils.isEmpty(response.data)) {
+                onResponse(response.code, (T) JSON.parseObject(response.data, this.cl));
             } else {
-                onResponse(code, null);
+                onResponse(response.code, null);
             }
         } else {
-            onResponseError(code, jsonObject.optString("msg"));
+            onResponseError(response.code, response.msg);
         }
+        response.data = null;
+        response = null;
     }
 
     @Override
