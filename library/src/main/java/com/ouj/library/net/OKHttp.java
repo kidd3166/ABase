@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 
 import com.alibaba.fastjson.JSON;
+import com.ouj.library.BaseApplication;
 import com.ouj.library.net.body.GzipResponseBody;
 
 import java.io.File;
@@ -31,7 +32,6 @@ import okio.Okio;
  */
 public class OKHttp {
 
-    private static boolean DEBUG = true;
     private static OkHttpClient client = null;
     private int cacheType = CacheType.NETWORK_ELSE_CACHED;
     private String tag;
@@ -46,7 +46,7 @@ public class OKHttp {
     };
     private static Handler mDelivery = null;
 
-    public static void init(Context context, List<Interceptor> netWorkinterceptors, List<Interceptor> interceptors, boolean isGzip, long timeout, int cacheSize) {
+    public static void init(Context context, List<Interceptor> netWorkinterceptors, List<Interceptor> interceptors, boolean isGzip, long timeout, int cacheSize, boolean debug) {
         mDelivery = new Handler(context.getMainLooper());
 
         int totalCacheSize = cacheSize * 1024 * 1024;
@@ -55,7 +55,7 @@ public class OKHttp {
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .cache(cache).connectTimeout(timeout, TimeUnit.MILLISECONDS).readTimeout(timeout, TimeUnit.MILLISECONDS)
                 .addNetworkInterceptor(REWRITE_CACHE_CONTROL_INTERCEPTOR);
-        if (DEBUG) {
+        if (debug) {
             HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
             logging.setLevel(HttpLoggingInterceptor.Level.BODY);
             builder.addInterceptor(logging);
