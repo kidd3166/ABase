@@ -159,7 +159,7 @@ public class AppVersion implements DialogInterface.OnDismissListener {
     public void downloadAPK(final Context context, final UpdateResponse response) {
         if (downloadProgressDialog != null && downloadProgressDialog.isShowing())
             return;
-        File fileDir = new File(context.getFilesDir(), "download");
+        File fileDir = context.getExternalFilesDir("download");
         if (!fileDir.exists()) {
             fileDir.mkdirs();
         }
