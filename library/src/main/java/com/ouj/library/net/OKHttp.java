@@ -109,6 +109,14 @@ public class OKHttp {
         this.tag = tag;
     }
 
+    public Call enqueue(final Request request, CacheControl cacheControl, final Callback callback) {
+        if (client == null)
+            return null;
+        Call call = client.newCall(request.newBuilder().tag(tag).cacheControl(cacheControl).build());
+        call.enqueue(callback);
+        return call;
+    }
+
     public Call enqueue(final Request request, final ResponseCallback callback) {
         if (client == null)
             return null;

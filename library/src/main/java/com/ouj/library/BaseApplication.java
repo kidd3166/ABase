@@ -37,6 +37,7 @@ public class BaseApplication extends Application implements Application.Activity
     public static String APP_VERSION;
     public static String APP_OS = "2";
     public static boolean APP_DEBUG;
+    public static boolean APP_PRODUCTION;
 
     public static Application app;
     private boolean foreground = false, paused = true;
@@ -65,8 +66,11 @@ public class BaseApplication extends Application implements Application.Activity
         }
         String environment = ApplicationUtils.getMetadataString(context, "environment");
         APP_DEBUG = true;
-        if (TextUtils.isEmpty(environment))
+        APP_PRODUCTION = false;
+        if (TextUtils.isEmpty(environment)) {
             APP_DEBUG = false;
+            APP_PRODUCTION = true;
+        }
 
         UIUtils.init(context);
         Logger.init();
