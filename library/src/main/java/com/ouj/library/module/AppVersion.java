@@ -172,6 +172,15 @@ public class AppVersion implements DialogInterface.OnDismissListener {
             return;
         }
 
+        File[] files = fileDir.listFiles();
+        if(files != null && files.length != 0){
+            for (File file : files){
+                if(!file.getName().equals(filePath.getName())){
+                    file.delete();
+                }
+            }
+        }
+
         downloadProgressDialog = new ProgressDialog(context);
         downloadProgressDialog.setMessage("下载中，请稍候...");
         downloadProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
