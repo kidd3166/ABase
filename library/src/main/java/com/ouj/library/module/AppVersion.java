@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.ouj.library.BaseApplication;
@@ -159,8 +160,6 @@ public class AppVersion implements DialogInterface.OnDismissListener {
 
     protected ProgressListener createProgressListener(Activity activity) {
         final DownloadDialog downloadProgressDialog = new DownloadDialog(activity);
-        downloadProgressDialog.setMessage("下载中，请稍候...");
-        downloadProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         downloadProgressDialog.setCancelable(false);
         downloadProgressDialog.setCanceledOnTouchOutside(false);
         downloadProgressDialog.show();
@@ -255,16 +254,24 @@ public class AppVersion implements DialogInterface.OnDismissListener {
         public void onDestory();
     }
 
-    class DownloadDialog extends ProgressDialog implements ProgressListener {
+    class DownloadDialog extends AlertDialog implements ProgressListener {
+
+        ProgressBar progressBar;
+        TextView progressTv;
 
         public DownloadDialog(Context context) {
             super(context);
+            setContentView(R.layout.base__view_version_download);
+            progressBar = (ProgressBar) findViewById(R.id.progressBar);
+            progressTv = (TextView) findViewById(R.id.progress);
         }
 
         @Override
         public void onProgress(int progress) {
-            if (isShowing())
-                setProgress(progress);
+            if (isShowing()) {
+                progressBar.setProgress(progress);
+                progressTv.setText(progress + "%");
+            }
         }
 
         @Override
