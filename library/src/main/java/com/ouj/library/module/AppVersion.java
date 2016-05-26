@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -225,6 +226,7 @@ public class AppVersion implements DialogInterface.OnDismissListener {
             public void onFailure(Call call, IOException e) {
                 if (progressListener != null)
                     progressListener.onDestory();
+                progressListener = null;
             }
 
             @Override
@@ -237,6 +239,7 @@ public class AppVersion implements DialogInterface.OnDismissListener {
                     sink.close();
                     if (progressListener != null)
                         progressListener.onDestory();
+                    progressListener = null;
                     Tool.installApk(filePath.getAbsolutePath());
                 }
             }
@@ -262,23 +265,42 @@ public class AppVersion implements DialogInterface.OnDismissListener {
 
         public DownloadDialog(Context context) {
             super(context);
-            setContentView(R.layout.base__view_version_download);
-            progressBar = (ProgressBar) findViewById(R.id.progressBar);
-            progressTv = (TextView) findViewById(R.id.progress);
         }
 
         @Override
-        public void onProgress(int progress) {
+        public void show() {
+            View view = LayoutInflater.from(getContext()).inflate(R.layout.base__view_version_download, null);
+            setView(view);
+            super.show();
+            progressBar = (ProgressBar) findViewById(com.ouj.library.R.id.progressBar);
+            progressTv = (TextView) findViewById(com.ouj.library.R.id.progress);
+        }
+
+        @Override
+        public void onProgress(final int progress) {
             if (isShowing()) {
-                progressBar.setProgress(progress);
-                progressTv.setText(progress + "%");
+                if (activity != null)
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressBar.setProgress(progress);
+                            progressTv.setText(progress + "%");
+                        }
+                    });
             }
         }
 
         @Override
         public void onDestory() {
-            if (isShowing())
-                dismiss();
+            if (isShowing()) {
+                if (activity != null)
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            dismiss();
+                        }
+                    });
+            }
         }
     }
 }
