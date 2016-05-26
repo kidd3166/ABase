@@ -121,6 +121,10 @@ public class AppVersion implements DialogInterface.OnDismissListener {
             String updateContent = response.updateContent;
             int mustUpdate = response.mustUpdate;
             final Dialog dialog = createUpdateDialog(activity);
+            dialog.setCancelable(false);
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.show();
+
             TextView title, content;
             TextView update, cancel;
             title = (TextView) dialog.findViewById(R.id.title);
@@ -146,9 +150,6 @@ public class AppVersion implements DialogInterface.OnDismissListener {
                     dialog.dismiss();
                 }
             });
-            dialog.setCancelable(false);
-            dialog.setCanceledOnTouchOutside(false);
-            dialog.show();
             if (mustUpdate == 1 && !needLoading) { // 必须升级
                 cancel.setVisibility(View.GONE);
             }
