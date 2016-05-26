@@ -6,17 +6,22 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
 import com.ouj.library.BaseApplication;
+import com.ouj.library.R;
 import com.ouj.library.net.OKHttp;
 import com.ouj.library.net.body.ProgressResponseBody;
 import com.ouj.library.net.extend.ResponseCallback;
+import com.ouj.library.util.SharedPrefUtils;
 import com.ouj.library.util.ToastUtils;
 import com.ouj.library.util.Tool;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -41,27 +46,36 @@ public class AppVersion implements DialogInterface.OnDismissListener {
     private Activity activity;
     private boolean needLoading;
     private ProgressDialog progressDialog;
-    private ProgressDialog downloadProgressDialog;
     private int progress;
+    private boolean isChecking;
+    private String time;
+    private ProgressListener progressListener;
+
+    private final String PREF = "AppVersionTime";
 
     public AppVersion(Activity activity, boolean needLoading) {
         this.activity = activity;
         this.needLoading = needLoading;
+        this.time = new SimpleDateFormat("MMdd").format(new Date());
     }
 
     public void destory() {
         if (progressDialog != null && progressDialog.isShowing())
             progressDialog.dismiss();
-        if (downloadProgressDialog != null && downloadProgressDialog.isShowing())
-            downloadProgressDialog.dismiss();
-
-
         activity = null;
         progressDialog = null;
-        downloadProgressDialog = null;
+        progressListener = null;
     }
 
     public void checkVersion() {
+        if (!needLoading) { // 一般是在启动时调用，点暂不更新时当天不重复检测
+            String prefTime = SharedPrefUtils.get(PREF, "");
+            if (time.equals(prefTime))
+                return;
+        }
+        if (isChecking)
+            return;
+        isChecking = true;
         RequestBody formBody = new FormBody.Builder()
                 .add("appid", BaseApplication.APP_ID)
                 .add("version", BaseApplication.APP_VERSION)
@@ -90,65 +104,52 @@ public class AppVersion implements DialogInterface.OnDismissListener {
                 if (progressDialog != null)
                     progressDialog.dismiss();
                 progressDialog = null;
+                isChecking = false;
             }
         });
 
     }
 
-    private void updateResult(final Activity activity, final UpdateResponse response) {
+    protected Dialog createUpdateDialog(Activity activity) {
+        return new AlertDialog.Builder(activity).setView(R.layout.base__view_version).setCancelable(false).create();
+    }
+
+    protected void updateResult(final Activity activity, final UpdateResponse response) {
         if (response.haveNewVersion > 0) {
             String versionTitle = String.format("发现新版本 v%s", response.versionName);
             String updateContent = response.updateContent;
-            final String apkUrl = response.apkUrl;
-            final long apkSize = response.apkSize;
             int mustUpdate = response.mustUpdate;
-            if (needLoading) {
-                Dialog dialog = new AlertDialog.Builder(activity).setTitle(versionTitle).setMessage(updateContent).setPositiveButton("升级", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        downloadAPK(activity.getApplicationContext(), response);
-                        dialog.dismiss();
-                    }
-                }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+            final Dialog dialog = createUpdateDialog(activity);
+            TextView title, content;
+            TextView update, cancel;
+            title = (TextView) dialog.findViewById(R.id.title);
+            content = (TextView) dialog.findViewById(R.id.content);
+            update = (TextView) dialog.findViewById(R.id.update);
+            cancel = (TextView) dialog.findViewById(R.id.cancel);
+            title.setText(versionTitle);
+            content.setText(updateContent);
+            update.setText("马上更新");
+            update.setOnClickListener(new View.OnClickListener() {
 
-                    }
-                }).setCancelable(false).create();
-                dialog.setCanceledOnTouchOutside(false);
-                dialog.show();
-            } else {
-                if (mustUpdate == 1) { // 必须升级
-                    Dialog dialog = new AlertDialog.Builder(activity).setTitle(versionTitle).setMessage(updateContent).setNeutralButton("立即升级", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            downloadAPK(activity, response);
-                            dialog.dismiss();
-                        }
-                    }).setOnCancelListener(new DialogInterface.OnCancelListener() {
-                        @Override
-                        public void onCancel(DialogInterface dialog) {
-                            activity.moveTaskToBack(true);
-                        }
-                    }).setCancelable(false).create();
-                    dialog.setCanceledOnTouchOutside(false);
-                    dialog.show();
-                } else {
-                    Dialog dialog = new AlertDialog.Builder(activity).setTitle(versionTitle).setMessage(updateContent).setPositiveButton("升级", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            downloadAPK(activity, response);
-                            dialog.dismiss();
-                        }
-                    }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    }).setCancelable(false).create();
-                    dialog.setCanceledOnTouchOutside(false);
-                    dialog.show();
+                @Override
+                public void onClick(View v) {
+                    downloadAPK(activity, response);
+                    dialog.dismiss();
                 }
+            });
+            cancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!needLoading)
+                        SharedPrefUtils.put(PREF, time);
+                    dialog.dismiss();
+                }
+            });
+            dialog.setCancelable(false);
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.show();
+            if (mustUpdate == 1 && !needLoading) { // 必须升级
+                cancel.setVisibility(View.GONE);
             }
         } else {
             if (this.needLoading)
@@ -156,8 +157,19 @@ public class AppVersion implements DialogInterface.OnDismissListener {
         }
     }
 
-    public void downloadAPK(final Context context, final UpdateResponse response) {
-        if (downloadProgressDialog != null && downloadProgressDialog.isShowing())
+    protected ProgressListener createProgressListener(Activity activity) {
+        final DownloadDialog downloadProgressDialog = new DownloadDialog(activity);
+        downloadProgressDialog.setMessage("下载中，请稍候...");
+        downloadProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        downloadProgressDialog.setCancelable(false);
+        downloadProgressDialog.setCanceledOnTouchOutside(false);
+        downloadProgressDialog.show();
+        return downloadProgressDialog;
+    }
+
+
+    protected void downloadAPK(final Activity context, final UpdateResponse response) {
+        if (progressListener != null)
             return;
         File fileDir = context.getExternalFilesDir("download");
         if (!fileDir.exists()) {
@@ -165,7 +177,7 @@ public class AppVersion implements DialogInterface.OnDismissListener {
         }
         final String apkUrl = response.apkUrl;
         final long apkSize = response.apkSize;
-        final File filePath = new File(fileDir, UUID.nameUUIDFromBytes(String.format("%s-%d",response.versionName, apkSize).getBytes()).toString() + ".apk");
+        final File filePath = new File(fileDir, UUID.nameUUIDFromBytes(String.format("%s-%d", response.versionName, apkSize).getBytes()).toString() + ".apk");
         boolean hasDownloaded = filePath.exists() && filePath.length() >= apkSize;
         if (hasDownloaded) {
             Tool.installApk(filePath.getAbsolutePath());
@@ -173,20 +185,15 @@ public class AppVersion implements DialogInterface.OnDismissListener {
         }
 
         File[] files = fileDir.listFiles();
-        if(files != null && files.length != 0){
-            for (File file : files){
-                if(!file.getName().equals(filePath.getName())){
+        if (files != null && files.length != 0) {
+            for (File file : files) {
+                if (!file.getName().equals(filePath.getName())) {
                     file.delete();
                 }
             }
         }
 
-        downloadProgressDialog = new ProgressDialog(context);
-        downloadProgressDialog.setMessage("下载中，请稍候...");
-        downloadProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        downloadProgressDialog.setCancelable(false);
-        downloadProgressDialog.setCanceledOnTouchOutside(false);
-        downloadProgressDialog.show();
+        progressListener = createProgressListener(activity);
 
         OkHttpClient client = new OkHttpClient.Builder().connectTimeout(10000, TimeUnit.MILLISECONDS).readTimeout(60 * 5 * 10000, TimeUnit.MILLISECONDS).addNetworkInterceptor(new Interceptor() {
             @Override
@@ -196,17 +203,16 @@ public class AppVersion implements DialogInterface.OnDismissListener {
                         .body(new ProgressResponseBody(originalResponse.body(), new ProgressResponseBody.ProgressListener() {
                             @Override
                             public void update(long bytesRead, long contentLength, boolean done) {
-                                if (downloadProgressDialog == null)
+                                if (progressListener == null)
                                     return;
                                 int p = (int) (bytesRead * 1.f / contentLength * 100);
                                 if (p > progress) {
                                     progress = p;
-                                    downloadProgressDialog.setProgress(progress);
+                                    progressListener.onProgress(progress);
                                 }
 
                                 if (done)
-                                    if (downloadProgressDialog != null)
-                                        downloadProgressDialog.dismiss();
+                                    progressListener.onDestory();
                             }
                         }))
                         .build();
@@ -217,7 +223,8 @@ public class AppVersion implements DialogInterface.OnDismissListener {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-
+                if (progressListener != null)
+                    progressListener.onDestory();
             }
 
             @Override
@@ -228,14 +235,42 @@ public class AppVersion implements DialogInterface.OnDismissListener {
                     BufferedSink sink = Okio.buffer(Okio.sink(filePath));
                     sink.writeAll(source);
                     sink.close();
+                    if (progressListener != null)
+                        progressListener.onDestory();
                     Tool.installApk(filePath.getAbsolutePath());
                 }
             }
         });
     }
 
+
     @Override
     public void onDismiss(DialogInterface dialog) {
         destory();
+    }
+
+    public static interface ProgressListener {
+        public void onProgress(int progress);
+
+        public void onDestory();
+    }
+
+    class DownloadDialog extends ProgressDialog implements ProgressListener {
+
+        public DownloadDialog(Context context) {
+            super(context);
+        }
+
+        @Override
+        public void onProgress(int progress) {
+            if (isShowing())
+                setProgress(progress);
+        }
+
+        @Override
+        public void onDestory() {
+            if (isShowing())
+                dismiss();
+        }
     }
 }
