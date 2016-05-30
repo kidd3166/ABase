@@ -38,7 +38,11 @@ public class ResourceUtils {
         return getRes("style", name);
     }
 
-    private static int getRes(String type, String name) {
+    public static int getMipmap(String name) {
+        return getRes("mipmap", name);
+    }
+
+    public static int getRes(String type, String name) {
         String packageName = BaseApplication.app.getPackageName();
         Resources res = BaseApplication.app.getResources();
         int identifier = res.getIdentifier(name, type, packageName);
