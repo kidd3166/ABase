@@ -144,6 +144,7 @@ public class AppVersion implements DialogInterface.OnDismissListener {
             title.setText(versionTitle);
             content.setText(updateContent);
             update.setText("马上更新");
+
             update.setOnClickListener(new View.OnClickListener() {
 
                 @Override
