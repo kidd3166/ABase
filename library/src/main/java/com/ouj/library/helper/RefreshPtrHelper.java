@@ -237,7 +237,8 @@ public class RefreshPtrHelper<T extends PageResponse> {
                     if(count == 0){
                         mfooterTips.setText(R.string.sfl_default_placeholder_empty);
                     }else {
-                        mfooterTips.setText(R.string.default_footer_end);
+//                        mfooterTips.setText(R.string.default_footer_end);
+                        mfooterTips.setText("");
                     }
                 }else {
                     mfooterTips.setText("");
