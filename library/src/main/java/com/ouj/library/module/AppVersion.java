@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -118,6 +119,14 @@ public class AppVersion implements DialogInterface.OnDismissListener {
 
     protected void updateResult(final Activity activity, final UpdateResponse response) {
         if (response.haveNewVersion > 0) {
+            if(TextUtils.isEmpty(response.versionName))
+                return;
+            if (!needLoading) {
+                int times = SharedPrefUtils.get(response.versionName, 1);
+                if (times >= 3) {
+                    return;
+                }
+            }
             String versionTitle = String.format("发现新版本 v%s", response.versionName);
             String updateContent = response.updateContent;
             int mustUpdate = response.mustUpdate;
@@ -146,8 +155,11 @@ public class AppVersion implements DialogInterface.OnDismissListener {
             cancel.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (!needLoading)
+                    if (!needLoading) {
                         SharedPrefUtils.put(PREF, time);
+                        int times = SharedPrefUtils.get(response.versionName, 1);
+                        SharedPrefUtils.put(response.versionName, ++times);
+                    }
                     dialog.dismiss();
                 }
             });
