@@ -275,6 +275,7 @@ public class AppVersion implements DialogInterface.OnDismissListener {
 
         ProgressBar progressBar;
         TextView progressTv;
+        View background;
 
         public DownloadDialog(Context context) {
             super(context);
@@ -287,6 +288,13 @@ public class AppVersion implements DialogInterface.OnDismissListener {
             super.show();
             progressBar = (ProgressBar) findViewById(com.ouj.library.R.id.progressBar);
             progressTv = (TextView) findViewById(com.ouj.library.R.id.progress);
+            background = findViewById(com.ouj.library.R.id.background);
+            background.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dismiss();
+                }
+            });
         }
 
         @Override
