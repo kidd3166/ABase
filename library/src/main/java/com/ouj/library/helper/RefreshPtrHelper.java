@@ -270,6 +270,12 @@ public class RefreshPtrHelper<T extends PageResponse> {
         currentPage = 0;
     }
 
+    public void refreshComplete(){
+        loadMore = false;
+        if(mPtrFrameLayout != null)
+            mPtrFrameLayout.refreshComplete();
+    }
+
     public void setAutoLoadMore(boolean autoLoad) {
         this.autoLoadMore = autoLoad;
     }

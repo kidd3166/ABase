@@ -43,8 +43,7 @@ public abstract class ResponsePageCallBack<T extends PageResponse, R extends Ref
             } else {
                 statefulLayout.showContent();
             }
-            if (ptrHelper.getPtrFrameLayout() != null)
-                ptrHelper.getPtrFrameLayout().refreshComplete();
+            ptrHelper.refreshComplete();
         }
     }
 }
