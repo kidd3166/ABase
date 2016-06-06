@@ -187,7 +187,6 @@ public class RefreshPtrHelper<T extends PageResponse> {
             this.hasMore = response.hasMore();
             handleItems(response);
         }
-        handleNoMore();
     }
 
     protected void handleItems(ResponseItems responseItems) {
@@ -274,6 +273,7 @@ public class RefreshPtrHelper<T extends PageResponse> {
         loadMore = false;
         if(mPtrFrameLayout != null)
             mPtrFrameLayout.refreshComplete();
+        handleNoMore();
     }
 
     public void setAutoLoadMore(boolean autoLoad) {

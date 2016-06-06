@@ -35,6 +35,5 @@ public class TimelinePtrHelper extends RefreshPtrHelper<TimelineResponse> {
             this.hasMore = response.hasMore();
             handleItems(response);
         }
-        handleNoMore();
     }
 }
