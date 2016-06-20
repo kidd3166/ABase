@@ -19,7 +19,12 @@ public abstract class ResponseStringCallback extends ResponseCallback<String> {
 
     @Override
     public String parseNetworkResponse(Response response) throws Exception {
-        return response.body().string();
+        try {
+            return response.body().string();
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
     @Override
