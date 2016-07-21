@@ -2,6 +2,7 @@ package com.ouj.library;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -60,7 +61,19 @@ public class BaseActivity extends AppCompatActivity {
             Bundle args = new Bundle();
             args.putString("message", message);
             dialog.setArguments(args);
-            dialog.show(getSupportFragmentManager(), "progressDialog");
+            if(isFinishing())
+                return;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                if(isDestroyed())
+                    return;
+            }
+            if(getSupportFragmentManager() == null || getSupportFragmentManager().isDestroyed())
+                return;
+            try {
+                dialog.show(getSupportFragmentManager(), "progressDialog");
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -68,7 +81,11 @@ public class BaseActivity extends AppCompatActivity {
         Fragment fragment = getSupportFragmentManager().findFragmentByTag("progressDialog");
         if (fragment != null) {
             DialogFragment df = (DialogFragment) fragment;
-            df.dismissAllowingStateLoss();
+            try {
+                df.dismissAllowingStateLoss();
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
         }
     }
 
