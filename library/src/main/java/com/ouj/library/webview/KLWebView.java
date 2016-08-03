@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Build.VERSION;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -13,6 +14,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebSettings.PluginState;
 import android.webkit.WebView;
@@ -24,6 +27,7 @@ import android.widget.ScrollView;
 import com.ouj.library.BaseApplication;
 
 import java.io.File;
+import java.util.Map;
 
 //@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class KLWebView extends WebView {
@@ -106,6 +110,7 @@ public class KLWebView extends WebView {
     
     public void loadUrl(String url) {
         if (!mIsDestroyed) {
+            addJavascriptInterface();
             super.loadUrl(url);
         }
     }
@@ -317,15 +322,82 @@ public class KLWebView extends WebView {
         return mIsDestroyed;
     }
 
-    public void setCustomViewCallback(KLWebChromeClient.KLCustomViewCallback callback) {
-        mWebChromeClient.setCustomViewCallback(callback);
+    @SuppressWarnings("unused")
+    public boolean isVideoFullscreen()
+    {
+        return videoEnabledWebChromeClient != null && videoEnabledWebChromeClient.isVideoFullscreen();
     }
 
-    public boolean hasShownCustomView() {
-        return mWebChromeClient.hasShownCustomView();
+    /**
+     * Pass only a VideoEnabledWebChromeClient instance.
+     */
+    @Override @SuppressLint("SetJavaScriptEnabled")
+    public void setWebChromeClient(WebChromeClient client)
+    {
+        getSettings().setJavaScriptEnabled(true);
+
+        if (client instanceof KLWebChromeClient)
+        {
+            this.videoEnabledWebChromeClient = (KLWebChromeClient) client;
+        }
+
+        super.setWebChromeClient(client);
     }
 
-    public void onHideCustomView() {
-        mWebChromeClient.onHideCustomView();
+    @Override
+    public void loadData(String data, String mimeType, String encoding)
+    {
+        addJavascriptInterface();
+        super.loadData(data, mimeType, encoding);
     }
+
+    @Override
+    public void loadDataWithBaseURL(String baseUrl, String data, String mimeType, String encoding, String historyUrl)
+    {
+        addJavascriptInterface();
+        super.loadDataWithBaseURL(baseUrl, data, mimeType, encoding, historyUrl);
+    }
+
+    @Override
+    public void loadUrl(String url, Map<String, String> additionalHttpHeaders)
+    {
+        addJavascriptInterface();
+        super.loadUrl(url, additionalHttpHeaders);
+    }
+
+    private void addJavascriptInterface()
+    {
+        if (!addedJavascriptInterface)
+        {
+            // Add javascript interface to be called when the video ends (must be done before page load)
+            //noinspection all
+            addJavascriptInterface(new JavascriptInterface(), "_VideoEnabledWebView"); // Must match Javascript interface name of VideoEnabledWebChromeClient
+
+            addedJavascriptInterface = true;
+        }
+    }
+
+    public class JavascriptInterface
+    {
+        @android.webkit.JavascriptInterface @SuppressWarnings("unused")
+        public void notifyVideoEnd() // Must match Javascript interface method of VideoEnabledWebChromeClient
+        {
+            Log.d("___", "GOT IT");
+            // This code is not executed in the UI thread, so we must force that to happen
+            new Handler(Looper.getMainLooper()).post(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    if (videoEnabledWebChromeClient != null)
+                    {
+                        videoEnabledWebChromeClient.onHideCustomView();
+                    }
+                }
+            });
+        }
+    }
+
+    private KLWebChromeClient videoEnabledWebChromeClient;
+    private boolean addedJavascriptInterface;
 }
