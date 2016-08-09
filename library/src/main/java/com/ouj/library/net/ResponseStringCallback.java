@@ -14,7 +14,6 @@ import okhttp3.Response;
 public abstract class ResponseStringCallback extends ResponseCallback<String> {
 
     private String responseData;
-    private boolean isFromCache;
 
     public abstract void onResponse(String response) throws Exception;
 
