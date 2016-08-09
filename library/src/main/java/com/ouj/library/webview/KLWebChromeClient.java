@@ -130,6 +130,9 @@ public class KLWebChromeClient extends WebChromeClient implements MediaPlayer.On
             FrameLayout frameLayout = (FrameLayout) view;
             View focusedChild = frameLayout.getFocusedChild();
 
+            if(this.videoViewContainer != null || activityVideoView.getChildCount() > 0)
+                return;
+
             // Save video related variables
             this.isVideoFullscreen = true;
             this.videoViewContainer = frameLayout;

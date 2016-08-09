@@ -14,6 +14,7 @@ import okhttp3.Response;
 public abstract class ResponseStringCallback extends ResponseCallback<String> {
 
     private String responseData;
+    private boolean isFromCache;
 
     public abstract void onResponse(String response) throws Exception;
 
@@ -31,7 +32,6 @@ public abstract class ResponseStringCallback extends ResponseCallback<String> {
     public void onResponse(Call call, Response response) throws IOException {
         try {
             String data = response.body().string();
-            System.out.println(data);
             if (!TextUtils.isEmpty(responseData)) {
                 if (!data.equals(responseData)) {
                     responseData = null;
