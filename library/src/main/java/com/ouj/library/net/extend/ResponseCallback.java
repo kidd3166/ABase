@@ -15,6 +15,8 @@ import com.ouj.library.BaseApplication;
 import com.ouj.library.R;
 import com.ouj.library.event.LogoutEvent;
 import com.ouj.library.net.ResponseStringCallback;
+import com.ouj.library.util.NetworkUtils;
+import com.ouj.library.util.ToastUtils;
 import com.ouj.library.util.UIUtils;
 
 import org.json.JSONObject;
@@ -96,7 +98,7 @@ public abstract class ResponseCallback<T> extends ResponseStringCallback {
 
     @Override
     public void onResponse(String responseStr) throws Exception {
-        if(TextUtils.isEmpty(responseStr))
+        if (TextUtils.isEmpty(responseStr))
             return;
         JSONObject jsonObject = new JSONObject(responseStr);
         int code = jsonObject.optInt("code", 0);
@@ -118,6 +120,14 @@ public abstract class ResponseCallback<T> extends ResponseStringCallback {
 
     @Override
     public void onFailure(Call call, IOException e) {
-
+        Context context = BaseApplication.app;
+        if (context == null)
+            return;
+        String message = "";
+        if (!NetworkUtils.isAvailable()) {
+            message = "当前网络不可用，请检测网络环境";
+        }
+        if (!TextUtils.isEmpty(message))
+            ToastUtils.showToast(message);
     }
 }
