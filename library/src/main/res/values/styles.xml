@@ -3,7 +3,7 @@
 
     <style name="sfl_TextAppearanceStateDefault">
         <item name="android:textSize">14dp</item>
-        <item name="android:textColor">?android:attr/textColorSecondary</item>
+        <item name="android:textColor">#999</item>
     </style>
 
     <style name="sfl_StateImage">
