@@ -114,8 +114,8 @@ public class StatefulLayout extends FrameLayout {
     }
 
     public void setEmptyClick(View.OnClickListener onClickListener) {
-        if(mEmptyView != null){
-            mEmptyView.setOnClickListener(onClickListener);
+        if(mContainerEmpty != null){
+            mContainerEmpty.setOnClickListener(onClickListener);
         }
     }
 
@@ -144,8 +144,8 @@ public class StatefulLayout extends FrameLayout {
     }
 
     public void setOfflineClick(View.OnClickListener onClickListener) {
-        if(mOfflineView != null){
-            mOfflineView.setOnClickListener(onClickListener);
+        if(mContainerOffline != null){
+            mContainerOffline.setOnClickListener(onClickListener);
         }
     }
 

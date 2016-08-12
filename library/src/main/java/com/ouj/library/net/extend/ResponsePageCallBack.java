@@ -1,5 +1,7 @@
 package com.ouj.library.net.extend;
 
+import android.view.View;
+
 import com.ouj.library.helper.RefreshPtrHelper;
 import com.ouj.library.net.response.PageResponse;
 import com.ouj.library.util.NetworkUtils;
@@ -42,8 +44,15 @@ public abstract class ResponsePageCallBack<T extends PageResponse, R extends Ref
             if (itemCount == 0) {
                 if (NetworkUtils.isAvailable())
                     statefulLayout.showEmpty();
-                else
+                else {
                     statefulLayout.showOffline();
+                    statefulLayout.setOfflineClick(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            ptrHelper.onRefresh();
+                        }
+                    });
+                }
             } else {
                 statefulLayout.showContent();
             }
