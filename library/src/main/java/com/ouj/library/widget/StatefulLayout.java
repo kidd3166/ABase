@@ -114,8 +114,12 @@ public class StatefulLayout extends FrameLayout {
     }
 
     public void setEmptyClick(View.OnClickListener onClickListener) {
-        if(mContainerEmpty != null){
-            mContainerEmpty.setOnClickListener(onClickListener);
+        if(mDefaultEmptyText != null){
+            mDefaultEmptyText.setOnClickListener(onClickListener);
+        }
+        TintableImageView image = ((TintableImageView) mEmptyView.findViewById(R.id.state_image));
+        if (image != null) {
+            image.setOnClickListener(onClickListener);
         }
     }
 
@@ -144,8 +148,12 @@ public class StatefulLayout extends FrameLayout {
     }
 
     public void setOfflineClick(View.OnClickListener onClickListener) {
-        if(mContainerOffline != null){
-            mContainerOffline.setOnClickListener(onClickListener);
+        if(mDefaultOfflineText != null){
+            mDefaultOfflineText.setOnClickListener(onClickListener);
+        }
+        TintableImageView image = ((TintableImageView) mOfflineView.findViewById(R.id.state_image));
+        if (image != null) {
+            image.setOnClickListener(onClickListener);
         }
     }
 
