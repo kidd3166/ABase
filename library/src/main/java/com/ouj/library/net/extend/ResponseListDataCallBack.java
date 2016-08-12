@@ -1,6 +1,7 @@
 package com.ouj.library.net.extend;
 
 import com.ouj.library.helper.RefreshPtrHelper;
+import com.ouj.library.util.NetworkUtils;
 import com.ouj.library.widget.StatefulLayout;
 
 /**
@@ -31,7 +32,10 @@ public abstract class ResponseListDataCallBack<T extends RefreshPtrHelper.DataSt
     public void onFinish() {
         int itemCount = this.count;
         if (itemCount == 0) {
-            statefulLayout.showEmpty();
+            if (NetworkUtils.isAvailable())
+                statefulLayout.showEmpty();
+            else
+                statefulLayout.showOffline();
         } else {
             statefulLayout.showContent();
         }

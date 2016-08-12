@@ -2,6 +2,7 @@ package com.ouj.library.net.extend;
 
 import com.ouj.library.helper.RefreshPtrHelper;
 import com.ouj.library.net.response.PageResponse;
+import com.ouj.library.util.NetworkUtils;
 import com.ouj.library.widget.StatefulLayout;
 
 /**
@@ -39,7 +40,10 @@ public abstract class ResponsePageCallBack<T extends PageResponse, R extends Ref
         if (ptrHelper != null) {
             int itemCount = ptrHelper.getCount();
             if (itemCount == 0) {
-                statefulLayout.showEmpty();
+                if (NetworkUtils.isAvailable())
+                    statefulLayout.showEmpty();
+                else
+                    statefulLayout.showOffline();
             } else {
                 statefulLayout.showContent();
             }

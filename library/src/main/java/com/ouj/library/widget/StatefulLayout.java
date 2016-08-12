@@ -113,6 +113,11 @@ public class StatefulLayout extends FrameLayout {
         setEmptyImageDrawable(getResources().getDrawable(resourceId));
     }
 
+    public void setEmptyClick(View.OnClickListener onClickListener) {
+        if(mEmptyView != null){
+            mEmptyView.setOnClickListener(onClickListener);
+        }
+    }
 
     public void setOfflineText(@StringRes int resourceId) {
         setOfflineText(getResources().getString(resourceId));
@@ -138,6 +143,11 @@ public class StatefulLayout extends FrameLayout {
         setOfflineImageDrawable(getResources().getDrawable(resourceId));
     }
 
+    public void setOfflineClick(View.OnClickListener onClickListener) {
+        if(mOfflineView != null){
+            mOfflineView.setOnClickListener(onClickListener);
+        }
+    }
 
     public void setTextColor(@ColorInt int color) {
         ((TintableImageView) findViewById(R.id.state_image)).setTintColor(color);

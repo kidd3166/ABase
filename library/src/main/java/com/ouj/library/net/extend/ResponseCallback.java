@@ -125,7 +125,7 @@ public abstract class ResponseCallback<T> extends ResponseStringCallback {
             return;
         String message = "";
         if (!NetworkUtils.isAvailable()) {
-            message = "当前网络不可用，请检测网络环境";
+            message = "网络连接不上，请检查网络设置";
         }
         if (!TextUtils.isEmpty(message))
             ToastUtils.showToast(message);
