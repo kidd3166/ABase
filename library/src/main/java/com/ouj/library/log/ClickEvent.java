@@ -80,19 +80,21 @@ class ClickEvent extends Thread {
     }
 
     public void onEvent(OnForegroundEvent event) {
-        uploadLog(BaseApplication.APP_UID);
+        uploadLog(BaseApplication.APP_UID, false);
     }
 
     public void onEvent(ClickLogEvent event) {
         if (!TextUtils.isEmpty(event.userId)) {
             ClickLog.close();
-            uploadLog(event.userId);
+            uploadLog(event.userId, false);
+        }else if(event.ignoreUser){
+            uploadLog(event.userId, true);
         }
     }
 
-    private void uploadLog(final String userId) {
+    private void uploadLog(final String userId, boolean ignoreUser) {
         Log.d("APP", "App uploadLog " + userId);
-        if (TextUtils.isEmpty(userId))
+        if (!ignoreUser && TextUtils.isEmpty(userId))
             return;
         if (handleing)
             return;
@@ -325,7 +327,7 @@ class ClickEvent extends Thread {
             initLogNameSize();
 //            deleteOldLogFile();
             if (!close)
-                uploadLog(BaseApplication.APP_UID);
+                uploadLog(BaseApplication.APP_UID, false);
         }
     }
 
