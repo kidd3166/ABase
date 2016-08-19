@@ -19,7 +19,7 @@ android {
     }
 }
 
-def androidSupportVersion = '24.+'
+def androidSupportVersion = '24.1.1'
 def okhttpVersion = '3.4.1'
 
 dependencies {
