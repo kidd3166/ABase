@@ -2,6 +2,10 @@ package com.ouj.library.net;
 
 import android.text.TextUtils;
 
+import com.ouj.library.BaseApplication;
+import com.ouj.library.BuildConfig;
+import com.umeng.analytics.MobclickAgent;
+
 import java.io.IOException;
 
 import okhttp3.CacheControl;
@@ -29,8 +33,8 @@ public abstract class ResponseStringCallback extends ResponseCallback<String> {
 
     @Override
     public void onResponse(Call call, Response response) throws IOException {
+        String data = response.body().string();
         try {
-            String data = response.body().string();
             if (!TextUtils.isEmpty(responseData)) {
                 if (!data.equals(responseData)) {
                     responseData = null;
@@ -44,6 +48,9 @@ public abstract class ResponseStringCallback extends ResponseCallback<String> {
             }
         } catch (Throwable e) {
             e.printStackTrace();
+            if(!BuildConfig.DEBUG){
+                MobclickAgent.reportError(BaseApplication.app, "NETWORK RESPONSE ERROR: " + data);
+            }
         }
     }
 }
