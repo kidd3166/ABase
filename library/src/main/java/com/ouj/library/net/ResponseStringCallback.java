@@ -18,6 +18,11 @@ import okhttp3.Response;
 public abstract class ResponseStringCallback extends ResponseCallback<String> {
 
     private String responseData;
+    private boolean cacheResposne;
+
+    public boolean isCacheResposne() {
+        return cacheResposne;
+    }
 
     public abstract void onResponse(String response) throws Exception;
 
@@ -35,15 +40,18 @@ public abstract class ResponseStringCallback extends ResponseCallback<String> {
     public void onResponse(Call call, Response response) throws IOException {
         String data = response.body().string();
         try {
-            if (!TextUtils.isEmpty(responseData)) {
-                if (!data.equals(responseData)) {
-                    responseData = null;
+            if (!TextUtils.isEmpty(this.responseData)) {
+                if (!data.equals(this.responseData)) {
+                    this.responseData = null;
+                    this.cacheResposne = false;
                     onResponse(data);
                 }
             } else if (CacheControl.FORCE_CACHE.toString().equals(call.request().cacheControl().toString())) {
-                responseData = data;
+                this.responseData = data;
+                this.cacheResposne = true;
                 onResponse(data);
             } else {
+                this.cacheResposne = false;
                 onResponse(data);
             }
         } catch (Throwable e) {
