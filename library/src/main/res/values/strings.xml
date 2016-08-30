@@ -1,5 +1,5 @@
 <resources>
     <string name="sfl_default_placeholder_empty">没有数据哦~</string>
     <string name="sfl_default_placeholder_offline">网络连接异常</string>
-    <string name="default_footer_end">没了~</string>
+    <string name="default_footer_end">没有更多了～</string>
 </resources>
