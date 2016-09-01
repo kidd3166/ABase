@@ -38,6 +38,14 @@ public abstract class ResponsePageCallBack<T extends PageResponse, R extends Ref
     }
 
     @Override
+    public void onResponseError(int code, String message) throws Exception {
+        super.onResponseError(code, message);
+        if (ptrHelper != null) {
+            ptrHelper.tryLoad();
+        }
+    }
+
+    @Override
     public void onFinish() {
         if (ptrHelper != null) {
             int itemCount = ptrHelper.getCount();

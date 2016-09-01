@@ -36,6 +36,7 @@ public class RefreshPtrHelper<T extends PageResponse> {
     protected int currentPage, resultCount;
     protected boolean hasMore, loadMore, autoLoadMore = true, isRefresh;
     protected boolean autoRefresh = true;
+    protected boolean canClickLoadMore = false;
     protected boolean mWrapAdapter = true, mFooter = true;
 
     public static interface Listener {
@@ -114,6 +115,8 @@ public class RefreshPtrHelper<T extends PageResponse> {
                 mfooterTips.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        if (canClickLoadMore)
+                            hasMore = true;
                         loadMoreListener.onLoadMore(mRecyclerView);
                     }
                 });
@@ -231,18 +234,22 @@ public class RefreshPtrHelper<T extends PageResponse> {
     protected void handleNoMore() {
         if (mfooterTips != null) {
             if (!this.hasMore) {
-                if(mDataStore != null){
+                if (mDataStore != null) {
                     int count = mDataStore.getCount();
-                    if(count == 0){
+                    if (count == 0) {
                         mfooterTips.setText(R.string.sfl_default_placeholder_empty);
-                    }else {
-                        mfooterTips.setText(R.string.default_footer_end);
+                    } else {
+                        if (canClickLoadMore) {
+                            mfooterTips.setText(R.string.default_footer_click);
+                        } else {
+                            mfooterTips.setText(R.string.default_footer_end);
+                        }
 //                        mfooterTips.setText("");
                     }
-                }else {
+                } else {
                     mfooterTips.setText("");
                 }
-            }else
+            } else
                 mfooterTips.setText("");
         }
         if (mfooterProgress != null)
@@ -262,16 +269,22 @@ public class RefreshPtrHelper<T extends PageResponse> {
             mListener.onRefresh(String.valueOf(page), pullToRefresh);
     }
 
-    public void reset(){
+    public void tryLoad() {
+        if (mfooterTips != null) {
+            mfooterTips.setText(R.string.default_footer_click_try);
+        }
+    }
+
+    public void reset() {
         hasMore = false;
         loadMore = false;
         autoLoadMore = true;
         currentPage = 0;
     }
 
-    public void refreshComplete(){
+    public void refreshComplete() {
         loadMore = false;
-        if(mPtrFrameLayout != null)
+        if (mPtrFrameLayout != null)
             mPtrFrameLayout.refreshComplete();
         handleNoMore();
     }
@@ -293,4 +306,7 @@ public class RefreshPtrHelper<T extends PageResponse> {
         this.mWrapAdapter = true;
     }
 
+    public void setCanClickLoadMore(boolean canClickLoadMore) {
+        this.canClickLoadMore = canClickLoadMore;
+    }
 }
