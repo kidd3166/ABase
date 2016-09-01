@@ -274,6 +274,11 @@ public class RefreshPtrHelper<T extends PageResponse> {
             mfooterTips.setText(R.string.default_footer_click_try);
         }
     }
+    public void setLoadMore(String text) {
+        if (mfooterTips != null) {
+            mfooterTips.setText(text);
+        }
+    }
 
     public void reset() {
         hasMore = false;

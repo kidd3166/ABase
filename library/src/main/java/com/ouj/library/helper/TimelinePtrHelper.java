@@ -1,6 +1,7 @@
 package com.ouj.library.helper;
 
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 
 import com.ouj.library.net.response.TimelineResponse;
 
@@ -19,8 +20,8 @@ public class TimelinePtrHelper extends RefreshPtrHelper<TimelineResponse> {
 
     @Override
     protected void onRefresh(boolean pullToRefresh) {
-        if(mListener != null)
-        mListener.onRefresh(timeline, pullToRefresh);
+        if (mListener != null)
+            mListener.onRefresh(timeline, pullToRefresh);
     }
 
     @Override
@@ -31,8 +32,9 @@ public class TimelinePtrHelper extends RefreshPtrHelper<TimelineResponse> {
 
     public void handleResponse(TimelineResponse response) {
         if (response != null) {
-            this.timeline = response.timeline;
             this.hasMore = response.hasMore();
+            if (!TextUtils.isEmpty(response.timeline))
+                this.timeline = response.timeline;
             handleItems(response);
         }
     }
