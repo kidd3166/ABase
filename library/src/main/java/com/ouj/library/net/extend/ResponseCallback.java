@@ -129,6 +129,5 @@ public abstract class ResponseCallback<T> extends ResponseStringCallback {
         }
         if (!TextUtils.isEmpty(message))
             ToastUtils.showToast(message);
-        onFinish();
     }
 }
