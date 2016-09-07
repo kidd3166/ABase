@@ -237,7 +237,7 @@ public class RefreshPtrHelper<T extends PageResponse> {
                 if (mDataStore != null) {
                     int count = mDataStore.getCount();
                     if (count == 0) {
-                        mfooterTips.setText(R.string.sfl_default_placeholder_empty);
+                        mfooterTips.setText("");
                     } else {
                         if (canClickLoadMore) {
                             mfooterTips.setText(R.string.default_footer_click);
