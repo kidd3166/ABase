@@ -30,6 +30,7 @@
                 android:id="@+id/state_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
                 android:gravity="center" android:layout_marginTop="10dp"
                 android:text="@string/sfl_default_placeholder_empty"
                 android:textAppearance="@style/sfl_TextAppearanceStateDefault"/>
