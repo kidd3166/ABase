@@ -193,7 +193,7 @@ public class StatefulLayout extends FrameLayout {
     public void setState(int state) {
         mState = state;
         if (mContent != null)
-            mContent.setVisibility(View.VISIBLE );
+            mContent.setVisibility(state == State.CONTENT ? View.VISIBLE : View.GONE);
         if (mContainerProgress != null)
             mContainerProgress.setVisibility(state == State.PROGRESS ? View.VISIBLE : View.GONE);
         if (mContainerOffline != null)

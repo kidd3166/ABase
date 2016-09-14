@@ -168,7 +168,7 @@ public class RefreshPtrHelper<T extends PageResponse> {
         RecyclerView.Adapter<?> adapter = mRecyclerView.getAdapter();
         if (adapter != null) {
             if (adapter instanceof WrapAdapter) {
-                itemCount = ((WrapAdapter) adapter).getWrappedCount();
+                itemCount = ((WrapAdapter) adapter).getWrappedCount() + ((WrapAdapter) adapter).getHeaderCount();
             } else {
                 itemCount = adapter.getItemCount();
             }
