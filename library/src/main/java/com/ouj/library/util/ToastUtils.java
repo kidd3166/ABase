@@ -21,10 +21,10 @@ public class ToastUtils {
     public static boolean isTooFast(int delay) {
         long curTime = System.currentTimeMillis();
         long span = curTime - time;
+        time = curTime;
         if (span < delay) {
             return true;
         } else {
-            time = curTime;
             return false;
         }
     }
@@ -39,11 +39,9 @@ public class ToastUtils {
     }
 
     public static void showToast(String msg) {
-        if (isTooFast())
-            return;
-        if (isSame(msg))
-            return;
-        Toast.makeText(BaseApplication.app, msg, Toast.LENGTH_SHORT).show();
+        if (!isTooFast() || !isSame(msg)) {
+            Toast.makeText(BaseApplication.app, msg, Toast.LENGTH_SHORT).show();
+        }
     }
 
     public static void showToast(int resId) {
