@@ -1,5 +1,6 @@
 package com.ouj.library.util;
 
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.widget.Toast;
 
@@ -11,13 +12,14 @@ import com.ouj.library.BaseApplication;
 public class ToastUtils {
 
     private static long time = 0;
+    private static String last = "";
 
     public static boolean isTooFast() {
         return isTooFast(600);
     }
 
     public static boolean isTooFast(int delay) {
-        long curTime = System.nanoTime();
+        long curTime = System.currentTimeMillis();
         long span = curTime - time;
         if (span < delay) {
             return true;
@@ -27,16 +29,26 @@ public class ToastUtils {
         }
     }
 
+    public static boolean isSame(String msg) {
+        if (!TextUtils.isEmpty(msg)) {
+            if (msg.equals(last))
+                return true;
+        }
+        last = msg;
+        return false;
+    }
+
     public static void showToast(String msg) {
         if (isTooFast())
+            return;
+        if (isSame(msg))
             return;
         Toast.makeText(BaseApplication.app, msg, Toast.LENGTH_SHORT).show();
     }
 
     public static void showToast(int resId) {
-        if (isTooFast())
-            return;
-        Toast.makeText(BaseApplication.app, resId, Toast.LENGTH_SHORT).show();
+        String msg = BaseApplication.app.getString(resId);
+        showToast(msg);
     }
 
     public static void showToastAtCenter(String msg) {
