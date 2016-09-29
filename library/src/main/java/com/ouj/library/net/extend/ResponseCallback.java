@@ -87,7 +87,7 @@ public abstract class ResponseCallback<T> extends ResponseStringCallback {
 
     public void onResponseError(int code, String message) throws Exception {
         if (code != 0) {
-            Toast.makeText(BaseApplication.app, BaseApplication.APP_DEBUG ? String.format("%d: %s", code, message) : message, Toast.LENGTH_SHORT).show();
+            ToastUtils.showToast(BaseApplication.APP_DEBUG ? String.format("%d: %s", code, message) : message);
         }
         if (code == -5) {// 登录失效
             LogoutEvent event = new LogoutEvent();
