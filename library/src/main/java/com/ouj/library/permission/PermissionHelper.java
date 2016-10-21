@@ -26,7 +26,7 @@ public class PermissionHelper {
         disallowablePermissionRunnables = new SparseArray<>();
     }
 
-    public void requestPermission(final Activity context, int id, Runnable allowableRunnable, Runnable disallowableRunnable, final Runnable requestPermissionsRunnable, final String... permissions) {
+    public void requestPermission(final Activity context, int id, Runnable allowableRunnable, final Runnable disallowableRunnable, final Runnable requestPermissionsRunnable, final String... permissions) {
         if (permissions == null || permissions.length == 0)
             return;
 
@@ -62,7 +62,7 @@ public class PermissionHelper {
                             .setNegativeButton("取消", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-
+                                    disallowableRunnable.run();
                                 }
                             })
                             .setCancelable(false)
