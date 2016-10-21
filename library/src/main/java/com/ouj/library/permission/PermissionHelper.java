@@ -52,7 +52,7 @@ public class PermissionHelper {
 
                 if (ActivityCompat.shouldShowRequestPermissionRationale(context, permission)) {
                     new AlertDialog.Builder(context)
-                            .setMessage("授权后才能使用该功能")
+                            .setMessage("应用权限受限，授权后才能使用该功能")
                             .setPositiveButton("好", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -65,6 +65,7 @@ public class PermissionHelper {
 
                                 }
                             })
+                            .setCancelable(false)
                             .create()
                             .show();
                 } else {
