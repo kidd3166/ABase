@@ -36,7 +36,7 @@ public class ApplicationUtils {
         boolean isWork = false;
         ActivityManager myAM = (ActivityManager) mContext
                 .getSystemService(Context.ACTIVITY_SERVICE);
-        List<ActivityManager.RunningServiceInfo> myList = myAM.getRunningServices(40);
+        List<ActivityManager.RunningServiceInfo> myList = myAM.getRunningServices(256);
         if (myList == null || myList.isEmpty()) {
             return false;
         }
